@@ -50,17 +50,26 @@ static const NSTimeInterval kReorientationDuration = 0.3;
  *
  */
 static CFArrayRef
-BPCreatePageFrames(BPDocument *document, CGSize pageSize, CGSize *suggestedContentSizeOut) {
+BPCreatePageFrames(BPDocument *document,
+                   CGSize pageSize,
+                   CGSize *suggestedContentSizeOut,
+                   NSAttributedString **attributedTextOut) {
     BPAttributedStringConverter *converter = [[BPAttributedStringConverter alloc] init];
     
-    CFAttributedStringRef attributedText;
-    attributedText = (__bridge CFAttributedStringRef) [converter convertDocument:document];
+    NSAttributedString *attributedText = [converter convertDocument:document];
     
-    CFIndex len = CFAttributedStringGetLength(attributedText);
+    if (attributedTextOut != nil) {
+        *attributedTextOut = [converter convertDocument:document];
+    }
+    
+    CFAttributedStringRef attrText;
+    attrText = (__bridge CFAttributedStringRef) attributedText;
+    
+    CFIndex len = CFAttributedStringGetLength(attrText);
     CFMutableAttributedStringRef mutableAttributedText;
     mutableAttributedText = CFAttributedStringCreateMutableCopy(kCFAllocatorDefault,
                                                                 len,
-                                                                attributedText);
+                                                                attrText);
     
     CFMutableArrayRef frames = CFArrayCreateMutable(kCFAllocatorDefault,
                                                     0,
@@ -106,11 +115,12 @@ BPCreatePageFrames(BPDocument *document, CGSize pageSize, CGSize *suggestedConte
 
 @implementation BPMarkdownView
 {
-    BPParser       *_parser;
-    BPDocument     *_document;
-    NSMutableArray *_pageViews;
-    NSArray        *_previousPageViews;
-    CGRect         _previousFrame;
+    BPParser           *_parser;
+    BPDocument         *_document;
+    NSMutableArray     *_pageViews;
+    NSArray            *_previousPageViews;
+    CGRect              _previousFrame;
+    NSAttributedString *_attributedText;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -229,8 +239,12 @@ BPCreatePageFrames(BPDocument *document, CGSize pageSize, CGSize *suggestedConte
         CGRect pageRect = CGRectZero;
         pageRect.size = pageSize;
         
+        NSAttributedString *attributedText;
+        
         CGSize contentSize;
-        CFArrayRef pageFrames = BPCreatePageFrames(_document, pageSize, &contentSize);
+        CFArrayRef pageFrames = BPCreatePageFrames(_document, pageSize, &contentSize, &attributedText);
+        
+        _attributedText = attributedText;
         
         if ([self isAsynchronous]) {
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -324,6 +338,23 @@ BPCreatePageFrames(BPDocument *document, CGSize pageSize, CGSize *suggestedConte
 - (void)markdownPageView:(BPMarkdownPageView *)markdownView didHaveLinkTapped:(NSString *)link
 {
     [[self linkDelegate] markdownView:self didHaveLinkTapped:link];
+}
+
+#pragma mark UIAccessibility
+
+- (BOOL)isAccessibilityElement
+{
+    return YES;
+}
+
+- (UIAccessibilityTraits)accessibilityTraits
+{
+    return UIAccessibilityTraitStaticText;
+}
+
+- (NSString *)accessibilityValue
+{
+    return [_attributedText string];
 }
 
 @end
