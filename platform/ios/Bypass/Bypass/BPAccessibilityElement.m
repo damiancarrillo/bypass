@@ -1,5 +1,5 @@
 //
-//  BPWalkEventAccumulator.h
+//  BPAccessibilityElement.m
 //  Bypass
 //
 //  Created by Damian Carrillo on 3/22/13.
@@ -18,24 +18,13 @@
 //  limitations under the License.
 //
 
-#import <Foundation/Foundation.h>
-#import "BPElementWalker.h"
+#import "BPAccessibilityElement.h"
 
-OBJC_EXPORT NSString *const BYPASS_ELEMENT;
-OBJC_EXPORT NSString *const BYPASS_RANGE;
-OBJC_EXPORT NSString *const BYPASS_EVENT_TYPE;
+@implementation BPAccessibilityElement
 
-NS_ENUM(NSUInteger, BPEventType)
+- (BOOL)isAccessibilityElement
 {
-    BPEventTypeBefore,
-    BPEventTypeAfter
-};
-
-@interface BPWalkEventAccumulator : NSObject <BPElementVisitor>
-
-/*
- * An array of NSDictionaries.
- */
-- (NSArray *)accumulatedEvents;
+    return YES;
+}
 
 @end

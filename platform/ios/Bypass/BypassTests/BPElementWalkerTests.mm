@@ -1,5 +1,5 @@
 //
-//  BPRangeWalkerTests.m
+//  BPElementWalkerTests.m
 //  Bypass
 //
 //  Created by Damian Carrillo on 3/22/13.
@@ -19,23 +19,23 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
-#import "BPDocumentWalker.h"
+#import "BPElementWalker.h"
 #import "BPDocumentPrivate.h"
 #import "BPElementPrivate.h"
 #import "BPWalkEventAccumulator.h"
 
-@interface BPDocumentWalkerTests : SenTestCase
+@interface BPElementWalkerTests : SenTestCase
 @end
 
-@implementation BPDocumentWalkerTests
+@implementation BPElementWalkerTests
 {
-    BPDocument       *_document;
-    BPDocumentWalker *_documentWalker;
+    BPDocument      *_document;
+    BPElementWalker *_elementWalker;
 }
 
 - (void)setUp
 {
-    _documentWalker = [[BPDocumentWalker alloc] init];
+    _elementWalker = [[BPElementWalker alloc] init];
     
     using namespace Bypass;
     
@@ -64,14 +64,14 @@
 - (void)tearDown
 {
     _document = nil;
-    _documentWalker = nil;
+    _elementWalker = nil;
 }
 
-- (void)testWalkDocment
+- (void)testWalkDocument
 {
     BPWalkEventAccumulator *walkEventAccumulator = [[BPWalkEventAccumulator alloc] init];
-    [_documentWalker addElementVisitor:walkEventAccumulator];
-    [_documentWalker walkDocument:_document];
+    [_elementWalker addElementVisitor:walkEventAccumulator];
+    [_elementWalker walkDocument:_document];
     
     NSArray *events = [walkEventAccumulator accumulatedEvents];
     

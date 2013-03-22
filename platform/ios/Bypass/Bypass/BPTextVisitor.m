@@ -1,5 +1,5 @@
 //
-//  BPWalkEventAccumulator.m
+//  BPTextVisitor.m
 //  Bypass
 //
 //  Created by Damian Carrillo on 3/22/13.
@@ -18,15 +18,13 @@
 //  limitations under the License.
 //
 
-#import "BPWalkEventAccumulator.h"
+#import "BPTextVisitor.h"
+#import "BPElement.h"
 
-NSString *const BYPASS_ELEMENT    = @"BYPASS_ELEMENT";
-NSString *const BYPASS_RANGE      = @"BYPASS_RANGE";
-NSString *const BYPASS_EVENT_TYPE = @"BYPASS_EVENT_TYPE";
-
-@implementation BPWalkEventAccumulator
+@implementation BPTextVisitor
 {
-    NSMutableArray *_accumulatedEvents;
+    NSMutableString *_accumulatedText;
+    NSString        *_text;
 }
 
 - (id)init
@@ -34,7 +32,8 @@ NSString *const BYPASS_EVENT_TYPE = @"BYPASS_EVENT_TYPE";
     self = [super init];
     
     if (self != nil) {
-        _accumulatedEvents = [[NSMutableArray alloc] init];
+        _accumulatedText = [[NSMutableString alloc] init];
+        _text = nil;
     }
     
     return self;
@@ -44,27 +43,23 @@ NSString *const BYPASS_EVENT_TYPE = @"BYPASS_EVENT_TYPE";
      willVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange
 {
-  [_accumulatedEvents addObject:@{
-      BYPASS_ELEMENT: element,
-      BYPASS_RANGE: [NSValue valueWithRange:textRange],
-      BYPASS_EVENT_TYPE: @(BPEventTypeBefore)
-  }];
+    // do nothing
 }
 
 - (void)elementWalker:(BPElementWalker *)elementWalker
       didVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange
 {
-    [_accumulatedEvents addObject:@{
-        BYPASS_ELEMENT: element,
-        BYPASS_RANGE: [NSValue valueWithRange:textRange],
-        BYPASS_EVENT_TYPE: @(BPEventTypeAfter)
-    }];
+    [_accumulatedText appendString:[element text]];
 }
 
-- (NSArray *)accumulatedEvents
+- (NSString *)text
 {
-    return [NSArray arrayWithArray:_accumulatedEvents];
+    if (_text == nil) {
+        _text = [NSString stringWithString:_accumulatedText];
+    }
+    
+    return _text;
 }
 
 @end
