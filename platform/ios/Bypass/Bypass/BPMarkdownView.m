@@ -51,11 +51,10 @@ static const NSTimeInterval kReorientationDuration = 0.3;
  */
 static CFArrayRef
 BPCreatePageFrames(BPDocument *document,
+                   BPAttributedStringConverter *converter,
                    CGSize pageSize,
                    CGSize *suggestedContentSizeOut,
                    NSAttributedString **attributedTextOut) {
-    BPAttributedStringConverter *converter = [[BPAttributedStringConverter alloc] init];
-    
     NSAttributedString *attributedText = [converter convertDocument:document];
     
     if (attributedTextOut != nil) {
@@ -239,10 +238,12 @@ BPCreatePageFrames(BPDocument *document,
         CGRect pageRect = CGRectZero;
         pageRect.size = pageSize;
         
-        NSAttributedString *attributedText;
+        BPAttributedStringConverter *converter = [[BPAttributedStringConverter alloc] init];
         
+        NSAttributedString *attributedText;
         CGSize contentSize;
-        CFArrayRef pageFrames = BPCreatePageFrames(_document, pageSize, &contentSize, &attributedText);
+        
+        CFArrayRef pageFrames = BPCreatePageFrames(_document, converter, pageSize, &contentSize, &attributedText);
         
         _attributedText = attributedText;
         
