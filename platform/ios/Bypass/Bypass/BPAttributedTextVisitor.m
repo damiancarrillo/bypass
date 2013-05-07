@@ -1,8 +1,8 @@
 //
-//  BPAttributedStringRenderer.m
+//  BPAttributedTextVisitor.m
 //  Bypass
 //
-//  Created by Damian Carrillo on 3/1/13.
+//  Created by Damian Carrillo on 3/22/13.
 //  Copyright 2013 Uncodin, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,7 @@
 //  limitations under the License.
 //
 
-#import <CoreText/CoreText.h>
-#import "BPAttributedStringConverter.h"
+#import "BPAttributedTextVisitor.h"
 
 NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
 
@@ -31,7 +30,7 @@ static const CGFloat kParagraphSpacingLarge = 20.0f;
 static const CGFloat kParagraphSpacingSmall = 10.0f;
 static const CGFloat kParagraphSpacingNone  =  0.0f;
 
-@implementation BPAttributedStringConverter
+@implementation BPAttributedTextVisitor
 {
     CTFontRef _defaultFont;
     CTFontRef _boldFont;
@@ -45,6 +44,31 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
     CTFontRef _h4Font;
     CTFontRef _h5Font;
     CTFontRef _h6Font;
+}
+
+- (id)init
+{
+    self = [super init];
+    
+    if (self != nil) {
+        _attributedText = [[NSMutableAttributedString alloc] init];
+    }
+    
+    return self;
+}
+
+- (void)elementWalker:(BPElementWalker *)elementWalker
+     willVisitElement:(BPElement *)element
+        withTextRange:(NSRange)textRange
+{
+    // do nothing
+}
+
+- (int)elementWalker:(BPElementWalker *)elementWalker
+     didVisitElement:(BPElement *)element
+       withTextRange:(NSRange)textRange
+{
+    return [self convertElement:element toTarget:_attributedText range:textRange];
 }
 
 - (void)dealloc
@@ -211,33 +235,18 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
 
 #pragma mark Rendering
 
-- (NSAttributedString *)convertDocument:(BPDocument *)document
+- (int)convertElement:(BPElement *)element
+             toTarget:(NSMutableAttributedString *)target
+                range:(NSRange)effectiveRange
 {
-    NSMutableAttributedString *target = [[NSMutableAttributedString alloc] init];
-
-    for (BPElement *element in [document elements]) {
-        [self convertElement:element toTarget:target];
-    }
+    int insertedCharacters = 0;
     
-    return target;
-}
-
-
-- (void)convertElement:(BPElement *)element toTarget:(NSMutableAttributedString *)target
-{
-    // Capture the starting point of the effective range to apply attributes to
-    
-    NSRange effectiveRange;
-    effectiveRange.location = [target length];
- 
     BPElementType elementType = [element elementType];
     
-    // Render span elements immediately, and for some block-level elements, insert special
-    // characters
-    
+    // Render span elements and insert special characters for block elements
     if (elementType == BPList) {
         if ([[element parentElement] elementType] == BPListItem) {
-            [self insertNewlineIntoTarget:target];
+            insertedCharacters += [self insertNewlineIntoTarget:target atIndex:effectiveRange.location];
         }
     } else if (elementType == BPAutoLink) {
         [self renderLinkElement:element toTarget:target];
@@ -259,28 +268,14 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
         [self renderBoldItalicElement:element toTarget:target];
     } else if (elementType == BPText) {
         [self renderTextElement:element toTarget:target];
-    }
-    
-    // Render children of this particular element recursively
-    
-    for (BPElement *childElement in [element childElements]) {
-        [self convertElement:childElement toTarget:target];
-    }
-    
-    // Capture the end of the range
-    
-    effectiveRange.length = [target length] - effectiveRange.location;
-    
-    // Follow up with some types of block-level elements and apply properties en masse.
-    
-    if (elementType == BPParagraph) {
+    } else if (elementType == BPParagraph) {
         [self renderParagraphElement:element inRange:effectiveRange toTarget:target];
     } else if (elementType == BPHeader) {
         [self renderHeaderElement:element inRange:effectiveRange toTarget:target];
     } else if (elementType == BPListItem) {
-        [self renderListItemElement:element inRange:effectiveRange toTarget:target];
+        insertedCharacters += [self renderListItemElement:element inRange:effectiveRange toTarget:target];
     } else if (elementType == BPBlockCode) {
-        [self renderBlockCodeElement:element inRange:effectiveRange toTarget:target];
+        insertedCharacters += [self renderBlockCodeElement:element inRange:effectiveRange toTarget:target];
     } else if (elementType == BPBlockQuote) {
         [self renderBlockQuoteElement:element inRange:effectiveRange toTarget:target];
     }
@@ -288,15 +283,45 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
     if ([element isBlockElement]
         && ![[element parentElement] isBlockElement]
         && ![[[element parentElement] parentElement] isBlockElement]) {
-        [self insertNewlineIntoTarget:target];
+        insertedCharacters += [self appendNewlineOntoTarget:target];
     }
+    
+    return insertedCharacters;
 }
 
 #pragma mark Character Insertion
 
-- (void)insertNewlineIntoTarget:(NSMutableAttributedString *)target
+- (int)insertNewlineIntoTarget:(NSMutableAttributedString*) target
+                       atIndex:(int) index
+{
+    [target insertAttributedString:[[NSMutableAttributedString alloc] initWithString:@"\n"] atIndex:index];
+    
+    return 1;
+}
+
+- (int)appendNewlineOntoTarget:(NSMutableAttributedString *)target
 {
     [target appendAttributedString:[[NSMutableAttributedString alloc] initWithString:@"\n"]];
+    
+    return 1;
+}
+
+- (int)insertBulletIntoTarget:(NSMutableAttributedString*) target
+                        color:(UIColor*) bulletColor
+                      atIndex:(int)index
+{
+    NSDictionary *bulletAttributes = @{
+                                       NSFontAttributeName            : [self UIFontFromCTFont:[self monospaceFont]],
+                                       NSForegroundColorAttributeName : bulletColor
+                                       };
+    
+    NSAttributedString *attributedBullet;
+    attributedBullet = [[NSAttributedString alloc] initWithString:@"• "
+                                                       attributes:bulletAttributes];
+    
+    [target insertAttributedString:attributedBullet atIndex:index];
+    
+    return 2;
 }
 
 #pragma mark Span Element Rendering
@@ -378,7 +403,7 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
 - (void)renderLineBreak:(BPElement *)element
                toTarget:(NSMutableAttributedString *)target
 {
-    [self insertNewlineIntoTarget:target];
+    [self appendNewlineOntoTarget:target];
 }
 
 #pragma mark Block Element Rendering
@@ -400,10 +425,12 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
     [target addAttributes:attributes range:effectiveRange];
 }
 
-- (void)renderBlockCodeElement:(BPElement *)element
-                       inRange:(NSRange)effectiveRange
-                      toTarget:(NSMutableAttributedString *)target
+- (int)renderBlockCodeElement:(BPElement *)element
+                      inRange:(NSRange)effectiveRange
+                     toTarget:(NSMutableAttributedString *)target
 {
+    int insertedCharacters = 0;
+    
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
     attributes[NSFontAttributeName] = [self UIFontFromCTFont:[self monospaceFont]];
     attributes[NSForegroundColorAttributeName] = [UIColor grayColor];
@@ -416,7 +443,10 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
     attributes[NSParagraphStyleAttributeName] = paragraphStyle;
     
     [target addAttributes:attributes range:effectiveRange];
-    [self insertNewlineIntoTarget:target];
+    
+    insertedCharacters += [self appendNewlineOntoTarget:target];
+    
+    return insertedCharacters;
 }
 
 - (void)renderParagraphElement:(BPElement *)element
@@ -431,10 +461,12 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
     [target addAttributes:attributes range:effectiveRange];
 }
 
-- (void)renderListItemElement:(BPElement *)element
-                      inRange:(NSRange)effectiveRange
-                     toTarget:(NSMutableAttributedString *)target
+- (int)renderListItemElement:(BPElement *)element
+                     inRange:(NSRange)effectiveRange
+                    toTarget:(NSMutableAttributedString *)target
 {
+    int insertedCharacters = 0;
+    
     NSUInteger level = 0;
     BPElement *inspectedElement = [[element parentElement] parentElement];
     NSMutableString *indentation = [NSMutableString  string];
@@ -463,34 +495,28 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
             break;
     }
     
-    NSDictionary *bulletAttributes = @{
-        NSFontAttributeName            : [self UIFontFromCTFont:[self monospaceFont]],
-        NSForegroundColorAttributeName : bulletColor
-    };
-    
-    NSAttributedString *attributedBullet;
-    attributedBullet = [[NSAttributedString alloc] initWithString:@"• "
-                                                       attributes:bulletAttributes];
-    [target insertAttributedString:attributedBullet atIndex:effectiveRange.location];
-    
+    insertedCharacters += [self insertBulletIntoTarget:target color:bulletColor atIndex:effectiveRange.location];
     
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineSpacing:kLineSpacingSmall];
     
     NSDictionary *indentationAttributes = @{
-        NSFontAttributeName : [UIFont systemFontOfSize:kBulletIndentation],
-        NSParagraphStyleAttributeName : paragraphStyle
-    };
+                                            NSFontAttributeName : [UIFont systemFontOfSize:kBulletIndentation],
+                                            NSParagraphStyleAttributeName : paragraphStyle
+                                            };
     
     NSAttributedString *attributedIndentation;
     attributedIndentation = [[NSAttributedString alloc] initWithString:indentation
                                                             attributes:indentationAttributes];
     [target insertAttributedString:attributedIndentation atIndex:effectiveRange.location];
-
+    insertedCharacters += [attributedIndentation length];
+    
     if (([[[element parentElement] parentElement] elementType] != BPListItem)
         || (element != [[[element parentElement] childElements] lastObject])) {
-        [self insertNewlineIntoTarget:target];
+        insertedCharacters += [self appendNewlineOntoTarget:target];
     }
+    
+    return insertedCharacters;
 }
 
 - (void)renderHeaderElement:(BPElement *)element
@@ -531,5 +557,6 @@ static const CGFloat kParagraphSpacingNone  =  0.0f;
     
     [target addAttributes:attributes range:effectiveRange];
 }
+
 
 @end

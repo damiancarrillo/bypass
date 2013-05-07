@@ -51,7 +51,7 @@ NSString *const BYPASS_EVENT_TYPE = @"BYPASS_EVENT_TYPE";
   }];
 }
 
-- (void)elementWalker:(BPElementWalker *)elementWalker
+- (int)elementWalker:(BPElementWalker *)elementWalker
       didVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange
 {
@@ -60,6 +60,8 @@ NSString *const BYPASS_EVENT_TYPE = @"BYPASS_EVENT_TYPE";
         BYPASS_RANGE: [NSValue valueWithRange:textRange],
         BYPASS_EVENT_TYPE: @(BPEventTypeAfter)
     }];
+    
+    return 0;
 }
 
 - (NSArray *)accumulatedEvents

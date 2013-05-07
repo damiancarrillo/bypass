@@ -46,11 +46,13 @@
     // do nothing
 }
 
-- (void)elementWalker:(BPElementWalker *)elementWalker
+- (int)elementWalker:(BPElementWalker *)elementWalker
       didVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange
 {
     [_accumulatedText appendString:[element text]];
+    
+    return 0;
 }
 
 - (NSString *)text

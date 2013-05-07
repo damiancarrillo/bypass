@@ -19,10 +19,12 @@
 //
 
 #import <CoreText/CoreText.h>
-#import "BPAttributedStringConverter.h"
 #import "BPMarkdownView.h"
 #import "BPMarkdownPageView.h"
 #import "BPParser.h"
+#import "BPElementWalker.h"
+#import "BPAttributedTextVisitor.h"
+#import "BPAccessibilityVisitor.h"
 
 /*
  * The standard margin of the UIKit views. This value was based on human inspection.
@@ -51,18 +53,22 @@ static const NSTimeInterval kReorientationDuration = 0.3;
  */
 static CFArrayRef
 BPCreatePageFrames(BPDocument *document,
-                   BPAttributedStringConverter *converter,
                    CGSize pageSize,
                    CGSize *suggestedContentSizeOut,
-                   NSAttributedString **attributedTextOut) {
-    NSAttributedString *attributedText = [converter convertDocument:document];
+                   NSAttributedString **attributedTextOut,
+                   id accessibilityContainer) {
+    BPElementWalker* walker = [[BPElementWalker alloc] init];
     
-    if (attributedTextOut != nil) {
-        *attributedTextOut = [converter convertDocument:document];
-    }
+    BPAttributedTextVisitor* textVisitor = [[BPAttributedTextVisitor alloc] init];
+    [walker addElementVisitor:textVisitor];
+    [walker addElementVisitor:[[BPAccessibilityVisitor alloc] initWithAccessibilityContainer:accessibilityContainer]];
+    
+    [walker walkDocument:document];
+    
+    *attributedTextOut = textVisitor.attributedText;
     
     CFAttributedStringRef attrText;
-    attrText = (__bridge CFAttributedStringRef) attributedText;
+    attrText = (__bridge CFAttributedStringRef) *attributedTextOut;
     
     CFIndex len = CFAttributedStringGetLength(attrText);
     CFMutableAttributedStringRef mutableAttributedText;
@@ -238,12 +244,10 @@ BPCreatePageFrames(BPDocument *document,
         CGRect pageRect = CGRectZero;
         pageRect.size = pageSize;
         
-        BPAttributedStringConverter *converter = [[BPAttributedStringConverter alloc] init];
-        
         NSAttributedString *attributedText;
         CGSize contentSize;
         
-        CFArrayRef pageFrames = BPCreatePageFrames(_document, converter, pageSize, &contentSize, &attributedText);
+        CFArrayRef pageFrames = BPCreatePageFrames(_document, pageSize, &contentSize, &attributedText, self);
         
         _attributedText = attributedText;
         

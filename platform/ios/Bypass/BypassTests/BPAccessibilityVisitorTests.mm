@@ -36,7 +36,7 @@
 {
     using namespace Bypass;
     
-    _visitor = [[BPAccessibilityVisitor alloc] init];
+    _visitor = [[BPAccessibilityVisitor alloc] initWithAccessibilityContainer:self];
     
     Element e0;
     e0.setType(TEXT);
