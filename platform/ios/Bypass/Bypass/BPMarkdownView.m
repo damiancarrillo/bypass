@@ -56,16 +56,20 @@ BPCreatePageFrames(BPDocument *document,
                    CGSize pageSize,
                    CGSize *suggestedContentSizeOut,
                    NSAttributedString **attributedTextOut,
+                   NSArray **accessibleElementsOut,
                    id accessibilityContainer) {
     BPElementWalker* walker = [[BPElementWalker alloc] init];
     
     BPAttributedTextVisitor* textVisitor = [[BPAttributedTextVisitor alloc] init];
     [walker addElementVisitor:textVisitor];
-    [walker addElementVisitor:[[BPAccessibilityVisitor alloc] initWithAccessibilityContainer:accessibilityContainer]];
+    
+    BPAccessibilityVisitor* accessVisitor = [[BPAccessibilityVisitor alloc] initWithAccessibilityContainer:accessibilityContainer];
+    [walker addElementVisitor:accessVisitor];
     
     [walker walkDocument:document];
     
     *attributedTextOut = textVisitor.attributedText;
+    *accessibleElementsOut = accessVisitor.accessibleElements;
     
     CFAttributedStringRef attrText;
     attrText = (__bridge CFAttributedStringRef) *attributedTextOut;
@@ -126,6 +130,7 @@ BPCreatePageFrames(BPDocument *document,
     NSArray            *_previousPageViews;
     CGRect              _previousFrame;
     NSAttributedString *_attributedText;
+    NSArray            *accessibleElements;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -245,11 +250,13 @@ BPCreatePageFrames(BPDocument *document,
         pageRect.size = pageSize;
         
         NSAttributedString *attributedText;
+        NSArray* accessElements;
         CGSize contentSize;
         
-        CFArrayRef pageFrames = BPCreatePageFrames(_document, pageSize, &contentSize, &attributedText, self);
+        CFArrayRef pageFrames = BPCreatePageFrames(_document, pageSize, &contentSize, &attributedText, &accessElements, self);
         
         _attributedText = attributedText;
+        accessibleElements = accessElements;
         
         if ([self isAsynchronous]) {
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -359,17 +366,22 @@ BPCreatePageFrames(BPDocument *document,
 
 - (BOOL)isAccessibilityElement
 {
-    return YES;
+    return NO;
 }
 
-- (UIAccessibilityTraits)accessibilityTraits
+- (NSInteger)accessibilityElementCount
 {
-    return UIAccessibilityTraitStaticText;
+    return [accessibleElements count];
 }
 
-- (NSString *)accessibilityValue
+- (id)accessibilityElementAtIndex:(NSInteger)index
 {
-    return [_attributedText string];
+    return accessibleElements[index];
+}
+
+- (NSInteger)indexOfAccessibilityElement:(id)element
+{
+    return [accessibleElements indexOfObject:element];
 }
 
 @end
