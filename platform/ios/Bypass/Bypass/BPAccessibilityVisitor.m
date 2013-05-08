@@ -31,6 +31,7 @@
     NSArray        *_accessibleElements;
     NSMutableArray *_accumulatedLinkIndices;
     NSArray        *_linkIndices;
+    BPAccessibilityElement* currentElement;
 }
 
 - (id)init
@@ -61,42 +62,68 @@
     // do nothing
 }
 
+- (void)finishCurrentElement
+{
+    [_accumulatedAccessibilityElements addObject:currentElement];
+    _elementIndex++;
+    currentElement = nil;
+}
+
 - (int)elementWalker:(BPElementWalker *)elementWalker
       didVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange
 {
-    if ([element text] == nil) {
+    if ([element text] == nil || [[element text] isEqualToString:@"\n"]) {
         // Element is structural and won't need an accessibility element
         return 0;
     }
-        
-    BPAccessibilityElement *accessibilityElement =
-        [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
     
-    [accessibilityElement setTextRange:textRange];
-    [accessibilityElement setAccessibilityValue:[element text]];
-    [accessibilityElement setAccessibilityLabel:[element text]];
+    if ([self isAccessibilityDelimiter:element]) {
+        // Finish the current accessibility element and prep for a new one to be created
+        if (currentElement != nil) {
+            [self finishCurrentElement];
+        }
+    }
+    
+    if (currentElement == nil) {
+        currentElement = [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
+
+        [currentElement setAccessibilityValue:@""];
+    }
+    
+    [currentElement setAccessibilityValue:[currentElement.accessibilityValue stringByAppendingString:element.text]];
+    [currentElement setAccessibilityLabel:[currentElement accessibilityValue]];
 
     // Determine appropriate accessibility traits based on the element type
     
     UIAccessibilityTraits accessibilityTraits = UIAccessibilityTraitStaticText;
-    
-    if ([element elementType] == BPLink) {
-        accessibilityTraits |= UIAccessibilityTraitLink;
-        [_accumulatedLinkIndices addObject:@(_elementIndex)];
-    }
     
     if ([[element parentElement] elementType] == BPHeader) {
         // Header text has a parent element of type BPHeader
         accessibilityTraits |= UIAccessibilityTraitHeader;
     }
     
-    [accessibilityElement setAccessibilityTraits:accessibilityTraits];
-    [_accumulatedAccessibilityElements addObject:accessibilityElement];
+    if ([element elementType] == BPLink) {
+        accessibilityTraits |= UIAccessibilityTraitLink;
+        
+        [_accumulatedLinkIndices addObject:@(_elementIndex)];
+    }
     
-    _elementIndex++;
+    [currentElement setAccessibilityTraits:accessibilityTraits];
+    
+    if ([self isAccessibilityDelimiter:element]) {
+        // Finish adding the current accessibility element and prep for a new one on the next iteration
+        [self finishCurrentElement];
+    }
     
     return 0;
+}
+
+- (BOOL)isAccessibilityDelimiter:(BPElement*) element
+{
+    return [[element parentElement] elementType] == BPHeader ||
+    [element elementType] == BPLink ||
+    [[element parentElement] elementType] == BPListItem;
 }
 
 - (NSArray *)accessibleElements
