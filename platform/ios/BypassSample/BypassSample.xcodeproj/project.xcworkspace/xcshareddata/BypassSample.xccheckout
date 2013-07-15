@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C16A43C9-2FEE-4B6F-98D9-7634B60AB181</string>
+	<key>IDESourceControlProjectName</key>
+	<string>BypassSample</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>028B382E-B8CD-464D-89DA-BC4E3EBC11BB</key>
+		<string>ssh://github.com/damiancarrillo/bypass.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>platform/ios/BypassSample/BypassSample.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>028B382E-B8CD-464D-89DA-BC4E3EBC11BB</key>
+		<string>../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/damiancarrillo/bypass.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>028B382E-B8CD-464D-89DA-BC4E3EBC11BB</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>028B382E-B8CD-464D-89DA-BC4E3EBC11BB</string>
+			<key>IDESourceControlWCCName</key>
+			<string>bypass</string>
+		</dict>
+	</array>
+</dict>
+</plist>

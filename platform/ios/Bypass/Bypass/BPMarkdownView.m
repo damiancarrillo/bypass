@@ -54,14 +54,9 @@ static CFArrayRef
 BPCreatePageFrames(BPDocument *document,
                    CGSize pageSize,
                    CGSize *suggestedContentSizeOut,
+                   BPAttributedStringConverter *converter,
                    BPDisplaySettings *displaySettings,
                    NSAttributedString **attributedTextOut) {
-    BPAttributedStringConverter *converter = [[BPAttributedStringConverter alloc] init];
-    
-    if (displaySettings != nil) {
-        [converter setDisplaySettings:displaySettings];
-    }
-    
     NSAttributedString *attributedText = [converter convertDocument:document];
     
     if (attributedTextOut != nil) {
@@ -249,10 +244,12 @@ BPCreatePageFrames(BPDocument *document,
         CGRect pageRect = CGRectZero;
         pageRect.size = pageSize;
         
-        NSAttributedString *attributedText;
+        BPAttributedStringConverter *converter = [[BPAttributedStringConverter alloc] init];
         
+        NSAttributedString *attributedText;
         CGSize contentSize;
-        CFArrayRef pageFrames = BPCreatePageFrames(_document, pageSize, &contentSize, _displaySettings, &attributedText);
+        
+        CFArrayRef pageFrames = BPCreatePageFrames(_document, pageSize, &contentSize, converter, _displaySettings, &attributedText);
         
         _attributedText = attributedText;
         

@@ -374,8 +374,11 @@
 				5E5BC89C16E79B6200165503 /* parser.cpp in Sources */,
 				6BE4F72716F0E9D100670C16 /* BPMarkdownPageView.m in Sources */,
 				5E007AEB16FA17D200F8CFFD /* BPMarkdownView.m in Sources */,
+<<<<<<< HEAD
 				58D9DFA414A385A9337D153E /* BPDisplaySettings.m in Sources */,
+=======
 				5E3C9F7C16FCC424000384CB /* BPDocumentWalker.m in Sources */,
+>>>>>>> f863133
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
