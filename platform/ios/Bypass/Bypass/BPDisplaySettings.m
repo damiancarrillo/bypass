@@ -5,8 +5,6 @@
 // To change the template use AppCode | Preferences | File Templates.
 //
 
-
-#import "BPAttributedStringConverter.h"
 #import <CoreText/CoreText.h>
 #import "BPDisplaySettings.h"
 
@@ -19,30 +17,32 @@
   if (self) {
     CGFloat systemFontSize = [UIFont systemFontSize];
 
-    self.defaultFont = [UIFont systemFontOfSize:systemFontSize];
-    self.boldFont = [UIFont boldSystemFontOfSize:systemFontSize];
-    self.italicFont = [UIFont italicSystemFontOfSize:systemFontSize];
+    self.defaultFont   = [UIFont systemFontOfSize:systemFontSize];
+    self.boldFont      = [UIFont boldSystemFontOfSize:systemFontSize];
+    self.italicFont    = [UIFont italicSystemFontOfSize:systemFontSize];
     self.monospaceFont = [UIFont fontWithName:@"Courier" size:systemFontSize - 2.f];
-    self.quoteFont = [UIFont fontWithName:@"Marion-Italic" size:systemFontSize - 2.f];
-    self.h1Font = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 2.f];
-    self.h2Font = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 1.8f];
-    self.h3Font = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 1.6f];
-    self.h4Font = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 1.4f];
-    self.h5Font = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 1.2f];
-    self.h6Font = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize];
+    self.quoteFont     = [UIFont fontWithName:@"Marion-Italic" size:systemFontSize - 2.f];
+    self.h1Font        = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 2.f];
+    self.h2Font        = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 1.8f];
+    self.h3Font        = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 1.6f];
+    self.h4Font        = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 1.4f];
+    self.h5Font        = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize * 1.2f];
+    self.h6Font        = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:systemFontSize];
 
     self.defaultColor = [UIColor blackColor];
-    self.quoteColor = [UIColor darkGrayColor];
-    self.codeColor = [UIColor grayColor];
-    self.linkColor = [UIColor blueColor];
+    self.quoteColor   = [UIColor darkGrayColor];
+    self.codeColor    = [UIColor grayColor];
+    self.linkColor    = [UIColor blueColor];
+      
     self.bulletIndentation = 13.0f;
-    self.codeIndentation = 10.0f;
-    self.quoteIndentation = 23.0f;
-    self.paragraphSpacing = 20.0f;
+    self.codeIndentation   = 10.0f;
+    self.quoteIndentation  = 23.0f;
+      
+    self.paragraphSpacing        = 20.0f;
     self.paragraphSpacingHeading = 10.0f;
-    self.paragraphSpacingCode = 0.0f;
+    self.paragraphSpacingCode    = 0.0f;
 
-    self.paragraphLineSpacing = 1.2f;
+    self.paragraphLineSpacing        = 1.2f;
     self.paragraphLineSpacingHeading = 1.2f;
 
   }

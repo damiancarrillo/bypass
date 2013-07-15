@@ -1,8 +1,8 @@
 //
-//  BPAttributedStringRenderer.h
+//  BPAttributedTextVisitor.h
 //  Bypass
 //
-//  Created by Damian Carrillo on 3/1/13.
+//  Created by Damian Carrillo on 3/22/13.
 //  Copyright 2013 Uncodin, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,20 +18,18 @@
 //  limitations under the License.
 //
 
+#import <Foundation/Foundation.h>
+#import <CoreText/CoreText.h>
 #import <UIKit/UIKit.h>
-#import "BPDocument.h"
+#import "Bypass.h"
+#import "BPElementWalker.h"
+#import "BPDisplaySettings.h"
 
 @class BPDisplaySettings;
 
-OBJC_EXPORT NSString *const BPLinkStyleAttributeName;
+OBJC_EXPORT NSString* const BPLinkStyleAttributeName;
 
-/*!
- \brief Renders a Bypass Document to an `NSAttributedString`.
- */
-@interface BPAttributedStringConverter : NSObject
-
-@property(nonatomic, strong) BPDisplaySettings *displaySettings;
-
-- (NSAttributedString *)convertDocument:(BPDocument *)document;
-
+@interface BPAttributedTextVisitor : NSObject <BPElementVisitor>
+@property (strong, nonatomic) BPDisplaySettings *displaySettings;
+@property (strong, nonatomic) NSMutableAttributedString *attributedText;
 @end

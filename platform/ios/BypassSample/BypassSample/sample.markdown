@@ -10,10 +10,9 @@ github page for Bypass [here](https://github.com/Uncodin/bypass).
 	* One
 	* Two
 	* Three
-* One
-	* One
-	* Two
-	* Three
+		* One
+		* Two
+		* Three
 
 ## Code Block Support
 

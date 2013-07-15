@@ -25,7 +25,6 @@
 		5E5BC87B16E11F7300165503 /* BPElementTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E5BC87A16E11F7300165503 /* BPElementTests.mm */; };
 		5E5BC87F16E134C200165503 /* BPDocumentTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E5BC87E16E134C200165503 /* BPDocumentTests.mm */; };
 		5E5BC88216E1448C00165503 /* BPParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5BC88116E1448C00165503 /* BPParserTests.m */; };
-		5E5BC88716E15C5800165503 /* BPAttributedStringConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E5BC88616E15C5800165503 /* BPAttributedStringConverter.m */; };
 		5E5BC89116E79B2E00165503 /* array.c in Sources */ = {isa = PBXBuildFile; fileRef = 5E5BC88B16E79B2E00165503 /* array.c */; };
 		5E5BC89216E79B2E00165503 /* buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 5E5BC88D16E79B2E00165503 /* buffer.c */; };
 		5E5BC89316E79B2E00165503 /* markdown.c in Sources */ = {isa = PBXBuildFile; fileRef = 5E5BC88F16E79B2E00165503 /* markdown.c */; };
@@ -40,6 +39,7 @@
 		5E993C2816FD183C00120305 /* BPAccessibilityVisitorTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E993C2716FD183C00120305 /* BPAccessibilityVisitorTests.mm */; };
 		5E993C2916FD197300120305 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5BC84F16E005E700165503 /* UIKit.framework */; };
 		6BE4F72716F0E9D100670C16 /* BPMarkdownPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE4F72616F0E9D100670C16 /* BPMarkdownPageView.m */; };
+		C85A593F1738523600B9C2F2 /* BPAttributedTextVisitor.m in Sources */ = {isa = PBXBuildFile; fileRef = C85A593E1738523600B9C2F2 /* BPAttributedTextVisitor.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,8 +95,6 @@
 		5E5BC87D16E12E3100165503 /* BPDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPDocumentPrivate.h; sourceTree = "<group>"; };
 		5E5BC87E16E134C200165503 /* BPDocumentTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BPDocumentTests.mm; sourceTree = "<group>"; };
 		5E5BC88116E1448C00165503 /* BPParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPParserTests.m; sourceTree = "<group>"; };
-		5E5BC88516E15C5800165503 /* BPAttributedStringConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPAttributedStringConverter.h; sourceTree = "<group>"; };
-		5E5BC88616E15C5800165503 /* BPAttributedStringConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPAttributedStringConverter.m; sourceTree = "<group>"; };
 		5E5BC88B16E79B2E00165503 /* array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = array.c; path = ../../../../dep/libsoldout/array.c; sourceTree = "<group>"; };
 		5E5BC88C16E79B2E00165503 /* array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = array.h; path = ../../../../dep/libsoldout/array.h; sourceTree = "<group>"; };
 		5E5BC88D16E79B2E00165503 /* buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = buffer.c; path = ../../../../dep/libsoldout/buffer.c; sourceTree = "<group>"; };
@@ -120,6 +118,8 @@
 		5E993C2716FD183C00120305 /* BPAccessibilityVisitorTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BPAccessibilityVisitorTests.mm; sourceTree = "<group>"; };
 		6BE4F72516F0E9D100670C16 /* BPMarkdownPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPMarkdownPageView.h; sourceTree = "<group>"; };
 		6BE4F72616F0E9D100670C16 /* BPMarkdownPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPMarkdownPageView.m; sourceTree = "<group>"; };
+		C85A593D1738521800B9C2F2 /* BPAttributedTextVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPAttributedTextVisitor.h; sourceTree = "<group>"; };
+		C85A593E1738523600B9C2F2 /* BPAttributedTextVisitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPAttributedTextVisitor.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +259,8 @@
 				5E993C2216FD00C200120305 /* BPAccessibilityVisitor.m */,
 				5E993C1A16FCF92800120305 /* BPTextVisitor.h */,
 				5E993C1B16FCF92800120305 /* BPTextVisitor.m */,
+				C85A593D1738521800B9C2F2 /* BPAttributedTextVisitor.h */,
+				C85A593E1738523600B9C2F2 /* BPAttributedTextVisitor.m */,
 			);
 			name = Visitors;
 			sourceTree = "<group>";
@@ -276,8 +278,6 @@
 			isa = PBXGroup;
 			children = (
 				5E993C1D16FCF9CA00120305 /* Visitors */,
-				5E5BC88516E15C5800165503 /* BPAttributedStringConverter.h */,
-				5E5BC88616E15C5800165503 /* BPAttributedStringConverter.m */,
 				5E5BC87116E0083D00165503 /* BPDocument.h */,
 				5E5BC87216E0083D00165503 /* BPDocument.mm */,
 				5E5BC87D16E12E3100165503 /* BPDocumentPrivate.h */,
@@ -404,7 +404,6 @@
 				5E5BC85316E0066E00165503 /* BPParser.mm in Sources */,
 				5E5BC87316E0083D00165503 /* BPDocument.mm in Sources */,
 				5E5BC87616E0085000165503 /* BPElement.mm in Sources */,
-				5E5BC88716E15C5800165503 /* BPAttributedStringConverter.m in Sources */,
 				5E5BC89116E79B2E00165503 /* array.c in Sources */,
 				5E5BC89216E79B2E00165503 /* buffer.c in Sources */,
 				5E5BC89316E79B2E00165503 /* markdown.c in Sources */,
@@ -419,6 +418,7 @@
 				5E993C1C16FCF92800120305 /* BPTextVisitor.m in Sources */,
 				5E993C2316FD00C200120305 /* BPAccessibilityVisitor.m in Sources */,
 				5E993C2616FD027300120305 /* BPAccessibilityElement.m in Sources */,
+				C85A593F1738523600B9C2F2 /* BPAttributedTextVisitor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

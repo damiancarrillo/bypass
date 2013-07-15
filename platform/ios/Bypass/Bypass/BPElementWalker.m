@@ -56,26 +56,24 @@
 {
     NSRange textRange;
     textRange.location = _location;
-    textRange.length = 0U;
-
+    
+    // Process child elements first
+    for (BPElement *element in [rootElement childElements]) {
+        [self walkSubtreeWithRootElement:element];
+    }
+    
+    // Set effective range of this element
+    _location += [[rootElement text] length];
+    textRange.length = _location - textRange.location;
+    
+    // Prepare to visit element
     for (id<BPElementVisitor> elementVisitor in _elementVisitors) {
         [elementVisitor elementWalker:self willVisitElement:rootElement withTextRange:textRange];
     }
     
-    for (BPElement *element in [rootElement childElements]) {
-        for (id<BPElementVisitor> elementVisitor in _elementVisitors) {
-            [self walkSubtreeWithRootElement:element];
-            textRange.length = _location - textRange.location;
-        }
-        
-        _location += [[element text] length];
-    }
-    
-    _location += [[rootElement text] length];
-    textRange.length = _location - textRange.location;
-    
+    // Visit element
     for (id<BPElementVisitor> elementVisitor in _elementVisitors) {
-        [elementVisitor elementWalker:self didVisitElement:rootElement withTextRange:textRange];
+        _location += [elementVisitor elementWalker:self didVisitElement:rootElement withTextRange:textRange];
     }
 }
 

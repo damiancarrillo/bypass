@@ -1,8 +1,8 @@
 //
-//  BPAttributedStringRenderer.m
+//  BPAttributedTextVisitor.m
 //  Bypass
 //
-//  Created by Damian Carrillo on 3/1/13.
+//  Created by Damian Carrillo on 3/22/13.
 //  Copyright 2013 Uncodin, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,58 +19,56 @@
 //
 
 #import <CoreText/CoreText.h>
-#import "BPAttributedStringConverter.h"
 #import "BPDisplaySettings.h"
+#import "BPAttributedTextVisitor.h"
 
 NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
 
-@interface BPAttributedStringConverter ()
+@interface BPAttributedTextVisitor ()
 @property(nonatomic) BOOL renderedFirstParagraph;
 @end
 
-@implementation BPAttributedStringConverter
+@implementation BPAttributedTextVisitor
 
 #pragma mark Lifecycle
 
 - (id)init {
     if ((self = [super init])) {
         _displaySettings = [[BPDisplaySettings alloc] init];
-    }
+        _attributedText = [[NSMutableAttributedString alloc] init];
+	}
 
     return self;
 }
 
-#pragma mark Rendering
-
-- (NSAttributedString *)convertDocument:(BPDocument *)document
+- (void)elementWalker:(BPElementWalker *)elementWalker
+     willVisitElement:(BPElement *)element
+        withTextRange:(NSRange)textRange
 {
-    NSMutableAttributedString *target = [[NSMutableAttributedString alloc] init];
-
-    for (BPElement *element in [document elements]) {
-        [self convertElement:element toTarget:target];
-    }
-
-    [target addAttribute:NSForegroundColorAttributeName value:[_displaySettings defaultColor] range:NSMakeRange(0, target.length)];
-    
-    return target;
+    // do nothing
 }
 
-
-- (void)convertElement:(BPElement *)element toTarget:(NSMutableAttributedString *)target
+- (int)elementWalker:(BPElementWalker *)elementWalker
+     didVisitElement:(BPElement *)element
+       withTextRange:(NSRange)textRange
 {
-    // Capture the starting point of the effective range to apply attributes to
+    return [self convertElement:element toTarget:_attributedText range:textRange];
+}
+
+#pragma mark Rendering
+
+- (int)convertElement:(BPElement *)element
+             toTarget:(NSMutableAttributedString *)target
+                range:(NSRange)effectiveRange
+{
+    int insertedCharacters = 0;
     
-    NSRange effectiveRange;
-    effectiveRange.location = [target length];
- 
     BPElementType elementType = [element elementType];
     
-    // Render span elements immediately, and for some block-level elements, insert special
-    // characters
-    
+    // Render span elements and insert special characters for block elements
     if (elementType == BPList) {
         if ([[element parentElement] elementType] == BPListItem) {
-            [self insertNewlineIntoTarget:target];
+            insertedCharacters += [self insertNewlineIntoTarget:target atIndex:effectiveRange.location];
         }
     } else if (elementType == BPAutoLink) {
         [self renderLinkElement:element toTarget:target];
@@ -92,46 +90,60 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
         [self renderBoldItalicElement:element toTarget:target];
     } else if (elementType == BPText) {
         [self renderTextElement:element toTarget:target];
-    } else if (elementType == BPStrikethrough) {
-        [self renderStruckthroughElement:element toTarget:target];
-    }
-    
-    // Render children of this particular element recursively
-    
-    for (BPElement *childElement in [element childElements]) {
-        [self convertElement:childElement toTarget:target];
-    }
-    
-    // Capture the end of the range
-    
-    effectiveRange.length = [target length] - effectiveRange.location;
-    
-    // Follow up with some types of block-level elements and apply properties en masse.
-    
-    if (elementType == BPParagraph) {
+    } else if (elementType == BPParagraph) {
         [self renderParagraphElement:element inRange:effectiveRange toTarget:target];
     } else if (elementType == BPHeader) {
         [self renderHeaderElement:element inRange:effectiveRange toTarget:target];
     } else if (elementType == BPListItem) {
-        [self renderListItemElement:element inRange:effectiveRange toTarget:target];
+        insertedCharacters += [self renderListItemElement:element inRange:effectiveRange toTarget:target];
     } else if (elementType == BPBlockCode) {
-        [self renderBlockCodeElement:element inRange:effectiveRange toTarget:target];
+        insertedCharacters += [self renderBlockCodeElement:element inRange:effectiveRange toTarget:target];
     } else if (elementType == BPBlockQuote) {
         [self renderBlockQuoteElement:element inRange:effectiveRange toTarget:target];
+    } else if (elementType == BPStrikethrough) {
+        [self renderStruckthroughElement:element toTarget:target];
     }
     
     if ([element isBlockElement]
         && ![[element parentElement] isBlockElement]
         && ![[[element parentElement] parentElement] isBlockElement]) {
-        [self insertNewlineIntoTarget:target];
+        insertedCharacters += [self appendNewlineOntoTarget:target];
     }
+    
+    return insertedCharacters;
 }
 
 #pragma mark Character Insertion
 
-- (void)insertNewlineIntoTarget:(NSMutableAttributedString *)target
+- (int)insertNewlineIntoTarget:(NSMutableAttributedString*) target
+                       atIndex:(int) index
+{
+    [target insertAttributedString:[[NSMutableAttributedString alloc] initWithString:@"\n"] atIndex:index];
+    
+    return 1;
+}
+
+- (int)appendNewlineOntoTarget:(NSMutableAttributedString *)target
 {
     [target appendAttributedString:[[NSMutableAttributedString alloc] initWithString:@"\n"]];
+    
+    return 1;
+}
+
+- (int)insertBulletIntoTarget:(NSMutableAttributedString*) target
+                        color:(UIColor*) bulletColor
+                      atIndex:(int)index
+{
+    NSDictionary *bulletAttributes = @{NSFontAttributeName:            [_displaySettings monospaceFont],
+                                       NSForegroundColorAttributeName: bulletColor};
+    
+    NSAttributedString *attributedBullet;
+    attributedBullet = [[NSAttributedString alloc] initWithString:@"• "
+                                                       attributes:bulletAttributes];
+    
+    [target insertAttributedString:attributedBullet atIndex:index];
+    
+    return 2;
 }
 
 #pragma mark Span Element Rendering
@@ -151,12 +163,11 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
                attributes:(NSMutableDictionary *)attributes
                  toTarget:(NSMutableAttributedString *)target
 {
-  
-  if(font == nil)
-  {
-    NSLog(@"%@", [element debugDescription]);
-    return;
-  }
+    
+    if (font == nil) {
+        NSLog(@"%@", [element debugDescription]);
+        return;
+    }
   
     attributes[NSFontAttributeName] = font;
     
@@ -170,12 +181,12 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     } else {
         text = [[element text] stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
     }
-
+    
     if (text != nil) {
-        NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text
-                                                                             attributes:attributes];
-        [target appendAttributedString:attributedText];
-    }
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text
+                                                                         attributes:attributes];
+    [target appendAttributedString:attributedText];
+}
 }
 
 - (void)renderTextElement:(BPElement *)element toTarget:(NSMutableAttributedString *)target
@@ -234,7 +245,7 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
 - (void)renderLineBreak:(BPElement *)element
                toTarget:(NSMutableAttributedString *)target
 {
-    [self insertNewlineIntoTarget:target];
+    [self appendNewlineOntoTarget:target];
 }
 
 #pragma mark Block Element Rendering
@@ -257,10 +268,12 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     [target addAttributes:attributes range:effectiveRange];
 }
 
-- (void)renderBlockCodeElement:(BPElement *)element
-                       inRange:(NSRange)effectiveRange
-                      toTarget:(NSMutableAttributedString *)target
+- (int)renderBlockCodeElement:(BPElement *)element
+                      inRange:(NSRange)effectiveRange
+                     toTarget:(NSMutableAttributedString *)target
 {
+    int insertedCharacters = 0;
+    
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
     attributes[NSFontAttributeName] = [_displaySettings monospaceFont];
     attributes[NSForegroundColorAttributeName] = [_displaySettings codeColor];
@@ -273,7 +286,10 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     attributes[NSParagraphStyleAttributeName] = paragraphStyle;
     
     [target addAttributes:attributes range:effectiveRange];
-    [self insertNewlineIntoTarget:target];
+    
+    insertedCharacters += [self appendNewlineOntoTarget:target];
+    
+    return insertedCharacters;
 }
 
 - (void)renderParagraphElement:(BPElement *)element
@@ -284,10 +300,10 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     [paragraphStyle setParagraphSpacing:[_displaySettings paragraphSpacing]];
     [paragraphStyle setLineSpacing:[_displaySettings paragraphLineSpacing]];
     [paragraphStyle setFirstLineHeadIndent:[_displaySettings paragraphFirstLineHeadIndent]];
-
-    if(!self.renderedFirstParagraph) {
+    
+    if (!_renderedFirstParagraph) {
         [paragraphStyle setFirstLineHeadIndent:[_displaySettings firstParagraphFirstLineHeadIndent]];
-        self.renderedFirstParagraph = true;
+        _renderedFirstParagraph = true;
     }
     [paragraphStyle setHeadIndent:[_displaySettings paragraphHeadIndent]];
 
@@ -295,10 +311,12 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     [target addAttributes:attributes range:effectiveRange];
 }
 
-- (void)renderListItemElement:(BPElement *)element
-                      inRange:(NSRange)effectiveRange
-                     toTarget:(NSMutableAttributedString *)target
+- (int)renderListItemElement:(BPElement *)element
+                     inRange:(NSRange)effectiveRange
+                    toTarget:(NSMutableAttributedString *)target
 {
+    int insertedCharacters = 0;
+    
     NSUInteger level = 0;
     BPElement *inspectedElement = [[element parentElement] parentElement];
     NSMutableString *indentation = [NSMutableString  string];
@@ -327,10 +345,10 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
             break;
     }
     
-    NSDictionary *bulletAttributes = @{
-        NSFontAttributeName            : [_displaySettings monospaceFont],
-        NSForegroundColorAttributeName : bulletColor
-    };
+    insertedCharacters += [self insertBulletIntoTarget:target color:bulletColor atIndex:effectiveRange.location];
+    
+    NSDictionary *bulletAttributes = @{NSFontAttributeName: [_displaySettings monospaceFont],
+                                       NSForegroundColorAttributeName: bulletColor};
     
     NSAttributedString *attributedBullet;
     attributedBullet = [[NSAttributedString alloc] initWithString:@"• "
@@ -341,20 +359,21 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineSpacing:[_displaySettings lineSpacingSmall]];
     
-    NSDictionary *indentationAttributes = @{
-        NSFontAttributeName : [UIFont systemFontOfSize:[_displaySettings bulletIndentation]],
-        NSParagraphStyleAttributeName : paragraphStyle
-    };
+    NSDictionary *indentationAttributes = @{NSFontAttributeName: [UIFont systemFontOfSize:[_displaySettings bulletIndentation]],
+                                            NSParagraphStyleAttributeName: paragraphStyle};
     
     NSAttributedString *attributedIndentation;
     attributedIndentation = [[NSAttributedString alloc] initWithString:indentation
                                                             attributes:indentationAttributes];
     [target insertAttributedString:attributedIndentation atIndex:effectiveRange.location];
-
+    insertedCharacters += [attributedIndentation length];
+    
     if (([[[element parentElement] parentElement] elementType] != BPListItem)
         || (element != [[[element parentElement] childElements] lastObject])) {
-        [self insertNewlineIntoTarget:target];
+        insertedCharacters += [self appendNewlineOntoTarget:target];
     }
+    
+    return insertedCharacters;
 }
 
 - (void)renderHeaderElement:(BPElement *)element

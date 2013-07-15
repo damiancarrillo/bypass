@@ -35,7 +35,9 @@
 
 - (id)init
 {
-    return [self initWithAccessibilityContainer:nil];
+    [NSException raise:@"Use initWithAccessibilityContainer:" format:@"Use initWithAccessibilityContainer:"];
+    
+    return self;
 }
 
 - (id)initWithAccessibilityContainer:(id)accessibilityContainer
@@ -59,7 +61,7 @@
     // do nothing
 }
 
-- (void)elementWalker:(BPElementWalker *)elementWalker
+- (int)elementWalker:(BPElementWalker *)elementWalker
       didVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange
 {
@@ -85,6 +87,8 @@
     [_accumulatedAccessibilityElements addObject:accessibilityElement];
     
     _elementIndex++;
+    
+    return 0;
 }
 
 - (NSArray *)accessibilityElements

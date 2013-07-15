@@ -37,7 +37,9 @@
 - (void)elementWalker:(BPElementWalker *)elementWalker
      willVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange;
-- (void)elementWalker:(BPElementWalker *)elementWalker
+
+// Returns the number of characters added to the element's text. If characters were removed, the return value should be negative.
+- (int)elementWalker:(BPElementWalker *)elementWalker
       didVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange;
 

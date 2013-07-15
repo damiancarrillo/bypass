@@ -97,8 +97,8 @@
         STAssertEquals([events[1][BYPASS_RANGE] rangeValue].location, 0U,
                        @"Expected location 0");
         
-        STAssertEquals([events[0][BYPASS_RANGE] rangeValue].length, 0U,
-                       @"Expected length 0");
+        STAssertEquals([events[0][BYPASS_RANGE] rangeValue].length, 4U,
+                       @"Expected length 4");
         STAssertEquals([events[1][BYPASS_RANGE] rangeValue].length,
                        [[[_document elements][0] text] length],
                        @"Expected length to match element 1 text");
@@ -126,8 +126,8 @@
                        [[[_document elements][0] text] length],
                        @"Expected location 0");
         
-        STAssertEquals([events[2][BYPASS_RANGE] rangeValue].length, 0U,
-                       @"Expected length 0");
+        STAssertEquals([events[2][BYPASS_RANGE] rangeValue].length, 3U,
+                       @"Expected length 3");
         STAssertEquals([events[3][BYPASS_RANGE] rangeValue].length,
                        [[[_document elements][1] text] length],
                        @"Expected length to match element 2 text");
@@ -155,8 +155,8 @@
                        [[[_document elements][0] text] length] + [[[_document elements][1] text] length],
                        @"Expected location 0");
         
-        STAssertEquals([events[4][BYPASS_RANGE] rangeValue].length, 0U,
-                       @"Expected length 0");
+        STAssertEquals([events[4][BYPASS_RANGE] rangeValue].length, 6U,
+                       @"Expected length 6");
         STAssertEquals([events[5][BYPASS_RANGE] rangeValue].length,
                        [[[_document elements][2] text] length],
                        @"Expected length to match element 3 text");
