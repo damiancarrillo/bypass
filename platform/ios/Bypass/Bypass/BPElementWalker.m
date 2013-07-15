@@ -1,5 +1,5 @@
 //
-//  BPDocumentWalker.m
+//  BPElementWalker.m
 //  Bypass
 //
 //  Created by Damian Carrillo on 3/22/13.
@@ -19,9 +19,9 @@
 //
 
 #import "BPDocument.h"
-#import "BPDocumentWalker.h"
+#import "BPElementWalker.h"
 
-@implementation BPDocumentWalker
+@implementation BPElementWalker
 {
     NSMutableArray *_elementVisitors;
     NSUInteger      _location;
@@ -59,7 +59,7 @@
     textRange.length = 0U;
 
     for (id<BPElementVisitor> elementVisitor in _elementVisitors) {
-        [elementVisitor documentWalker:self willVisitElement:rootElement withTextRange:textRange];
+        [elementVisitor elementWalker:self willVisitElement:rootElement withTextRange:textRange];
     }
     
     for (BPElement *element in [rootElement childElements]) {
@@ -75,7 +75,7 @@
     textRange.length = _location - textRange.location;
     
     for (id<BPElementVisitor> elementVisitor in _elementVisitors) {
-        [elementVisitor documentWalker:self didVisitElement:rootElement withTextRange:textRange];
+        [elementVisitor elementWalker:self didVisitElement:rootElement withTextRange:textRange];
     }
 }
 

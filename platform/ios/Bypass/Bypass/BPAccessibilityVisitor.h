@@ -1,5 +1,5 @@
 //
-//  BPWalkEventAccumulator.h
+//  BPAccessibilityVisitor.h
 //  Bypass
 //
 //  Created by Damian Carrillo on 3/22/13.
@@ -21,21 +21,14 @@
 #import <Foundation/Foundation.h>
 #import "BPElementWalker.h"
 
-OBJC_EXPORT NSString *const BYPASS_ELEMENT;
-OBJC_EXPORT NSString *const BYPASS_RANGE;
-OBJC_EXPORT NSString *const BYPASS_EVENT_TYPE;
+@interface BPAccessibilityVisitor : NSObject<BPElementVisitor>
 
-NS_ENUM(NSUInteger, BPEventType)
-{
-    BPEventTypeBefore,
-    BPEventTypeAfter
-};
-
-@interface BPWalkEventAccumulator : NSObject <BPElementVisitor>
-
-/*
- * An array of NSDictionaries.
+/*!
+ * \brief Creates and initializes an accessibility visitor to represent an item in the specified container.
  */
-- (NSArray *)accumulatedEvents;
+- (id)initWithAccessibilityContainer:(id)container;
+
+- (NSArray *)accessibilityElements;
+- (NSArray *)linkIndices;
 
 @end

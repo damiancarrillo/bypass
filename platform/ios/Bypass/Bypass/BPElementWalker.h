@@ -1,5 +1,5 @@
 //
-//  BPWalkEventAccumulator.h
+//  BPElementWalker.h
 //  Bypass
 //
 //  Created by Damian Carrillo on 3/22/13.
@@ -19,23 +19,26 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BPElementWalker.h"
 
-OBJC_EXPORT NSString *const BYPASS_ELEMENT;
-OBJC_EXPORT NSString *const BYPASS_RANGE;
-OBJC_EXPORT NSString *const BYPASS_EVENT_TYPE;
+@class    BPElement;
+@class    BPDocument;
+@protocol BPElementVisitor;
 
-NS_ENUM(NSUInteger, BPEventType)
-{
-    BPEventTypeBefore,
-    BPEventTypeAfter
-};
+@interface BPElementWalker : NSObject
 
-@interface BPWalkEventAccumulator : NSObject <BPElementVisitor>
+- (void)addElementVisitor:(id<BPElementVisitor>)elementVisitor;
+- (void)walkDocument:(BPDocument *)document;
 
-/*
- * An array of NSDictionaries.
- */
-- (NSArray *)accumulatedEvents;
+@end
+
+@protocol BPElementVisitor <NSObject>
+@required
+
+- (void)elementWalker:(BPElementWalker *)elementWalker
+     willVisitElement:(BPElement *)element
+        withTextRange:(NSRange)textRange;
+- (void)elementWalker:(BPElementWalker *)elementWalker
+      didVisitElement:(BPElement *)element
+        withTextRange:(NSRange)textRange;
 
 @end

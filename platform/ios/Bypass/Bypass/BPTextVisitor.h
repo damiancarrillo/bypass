@@ -1,5 +1,5 @@
 //
-//  BPDocumentWalker.h
+//  BPTextVisitor.h
 //  Bypass
 //
 //  Created by Damian Carrillo on 3/22/13.
@@ -19,26 +19,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BPElementWalker.h"
 
-@class    BPElement;
-@class    BPDocument;
-@protocol BPElementVisitor;
+@interface BPTextVisitor : NSObject <BPElementVisitor>
 
-@interface BPDocumentWalker : NSObject
-
-- (void)addElementVisitor:(id<BPElementVisitor>)elementVisitor;
-- (void)walkDocument:(BPDocument *)document;
-
-@end
-
-@protocol BPElementVisitor <NSObject>
-@required
-
-- (void)documentWalker:(BPDocumentWalker *)documentWalker
-      willVisitElement:(BPElement *)element
-         withTextRange:(NSRange)textRange;
-- (void)documentWalker:(BPDocumentWalker *)documentWalker
-       didVisitElement:(BPElement *)element
-         withTextRange:(NSRange)textRange;
+- (NSString *)text;
 
 @end
