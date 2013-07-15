@@ -21,6 +21,7 @@
 @property(nonatomic) UIFont *italicFont;
 @property(nonatomic) UIFont *boldItalicFont;
 @property(nonatomic) UIFont *monospaceFont;
+@property(nonatomic) UIFont *bulletFont;
 @property(nonatomic) UIFont *quoteFont;
 @property(nonatomic) UIFont *h1Font;
 @property(nonatomic) UIFont *h2Font;

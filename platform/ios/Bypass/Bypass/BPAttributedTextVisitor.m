@@ -130,22 +130,6 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     return 1;
 }
 
-- (int)insertBulletIntoTarget:(NSMutableAttributedString*) target
-                        color:(UIColor*) bulletColor
-                      atIndex:(int)index
-{
-    NSDictionary *bulletAttributes = @{NSFontAttributeName:            [_displaySettings monospaceFont],
-                                       NSForegroundColorAttributeName: bulletColor};
-    
-    NSAttributedString *attributedBullet;
-    attributedBullet = [[NSAttributedString alloc] initWithString:@"• "
-                                                       attributes:bulletAttributes];
-    
-    [target insertAttributedString:attributedBullet atIndex:index];
-    
-    return 2;
-}
-
 #pragma mark Span Element Rendering
 
 - (void)renderSpanElement:(BPElement *)element
@@ -321,8 +305,7 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     BPElement *inspectedElement = [[element parentElement] parentElement];
     NSMutableString *indentation = [NSMutableString  string];
     
-    while ([inspectedElement elementType] == BPList
-           || [inspectedElement elementType] == BPListItem) {
+    while ([inspectedElement elementType] == BPList || [inspectedElement elementType] == BPListItem) {
         if ([inspectedElement elementType] == BPList) {
             [indentation appendString:@"\t"];
             ++level;
@@ -345,19 +328,20 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
             break;
     }
     
-    insertedCharacters += [self insertBulletIntoTarget:target color:bulletColor atIndex:effectiveRange.location];
-    
-    NSDictionary *bulletAttributes = @{NSFontAttributeName: [_displaySettings monospaceFont],
+    NSDictionary *bulletAttributes = @{NSFontAttributeName: [_displaySettings bulletFont],
                                        NSForegroundColorAttributeName: bulletColor};
     
     NSAttributedString *attributedBullet;
     attributedBullet = [[NSAttributedString alloc] initWithString:@"• "
                                                        attributes:bulletAttributes];
+    
     [target insertAttributedString:attributedBullet atIndex:effectiveRange.location];
-
+    
+    insertedCharacters += 2;
     
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineSpacing:[_displaySettings lineSpacingSmall]];
+    [paragraphStyle setHeadIndent:[_displaySettings bulletIndentation]];
     
     NSDictionary *indentationAttributes = @{NSFontAttributeName: [UIFont systemFontOfSize:[_displaySettings bulletIndentation]],
                                             NSParagraphStyleAttributeName: paragraphStyle};
