@@ -257,10 +257,10 @@
 				5E993C2516FD027300120305 /* BPAccessibilityElement.m */,
 				5E993C2116FD00C200120305 /* BPAccessibilityVisitor.h */,
 				5E993C2216FD00C200120305 /* BPAccessibilityVisitor.m */,
-				5E993C1A16FCF92800120305 /* BPTextVisitor.h */,
-				5E993C1B16FCF92800120305 /* BPTextVisitor.m */,
 				C85A593D1738521800B9C2F2 /* BPAttributedTextVisitor.h */,
 				C85A593E1738523600B9C2F2 /* BPAttributedTextVisitor.m */,
+				5E993C1A16FCF92800120305 /* BPTextVisitor.h */,
+				5E993C1B16FCF92800120305 /* BPTextVisitor.m */,
 			);
 			name = Visitors;
 			sourceTree = "<group>";
@@ -413,7 +413,7 @@
 				6BE4F72716F0E9D100670C16 /* BPMarkdownPageView.m in Sources */,
 				5E007AEB16FA17D200F8CFFD /* BPMarkdownView.m in Sources */,
 				58D9DFA414A385A9337D153E /* BPDisplaySettings.m in Sources */,
-				5E3C9F7C16FCC424000384CB /* BPDocumentWalker.m in Sources */,
+				5E3C9F7C16FCC424000384CB /* BPElementWalker.m in Sources */,
 				5E3C9F7C16FCC424000384CB /* BPElementWalker.m in Sources */,
 				5E993C1C16FCF92800120305 /* BPTextVisitor.m in Sources */,
 				5E993C2316FD00C200120305 /* BPAccessibilityVisitor.m in Sources */,
@@ -429,7 +429,7 @@
 				5E5BC87B16E11F7300165503 /* BPElementTests.mm in Sources */,
 				5E5BC87F16E134C200165503 /* BPDocumentTests.mm in Sources */,
 				5E5BC88216E1448C00165503 /* BPParserTests.m in Sources */,
-				5E3C9F7E16FCCF2A000384CB /* BPDocumentWalkerTests.mm in Sources */,
+				5E3C9F7E16FCCF2A000384CB /* BPElementWalkerTests.mm in Sources */,
 				5E3C9F7E16FCCF2A000384CB /* BPElementWalkerTests.mm in Sources */,
 				5E3C9F8416FCD2F7000384CB /* BPWalkEventAccumulator.m in Sources */,
 				5E993C2016FCFB1000120305 /* BPTextVisitorTests.mm in Sources */,
@@ -483,6 +483,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "${BOOST_HOME}";
+				"HEADER_SEARCH_PATHS[arch=*]" = "${BOOST_HOME}";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -506,6 +508,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "${BOOST_HOME}";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -519,7 +522,7 @@
 				DSTROOT = /tmp/Bypass.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Bypass/Bypass-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(BOOST_HOME)";
+				HEADER_SEARCH_PATHS = "${BOOST_HOME}";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -534,7 +537,7 @@
 				DSTROOT = /tmp/Bypass.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Bypass/Bypass-Prefix.pch";
-				HEADER_SEARCH_PATHS = "$(BOOST_HOME)";
+				HEADER_SEARCH_PATHS = "${BOOST_HOME}";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

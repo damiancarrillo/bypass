@@ -380,11 +380,6 @@ BPCreatePageFrames(BPDocument *document,
 
 #pragma mark UIAccessibility
 
-- (BOOL)isAccessibilityElement
-{
-    return NO;
-}
-
 - (NSInteger)accessibilityElementCount
 {
     return [accessibleElements count];
@@ -392,7 +387,9 @@ BPCreatePageFrames(BPDocument *document,
 
 - (id)accessibilityElementAtIndex:(NSInteger)index
 {
-    return accessibleElements[index];
+    NSLog(@"Showing accessibility element %d: %@", index, [[accessibleElements objectAtIndex:index] accessibilityValue]);
+    
+    return [accessibleElements objectAtIndex:index];
 }
 
 - (NSInteger)indexOfAccessibilityElement:(id)element

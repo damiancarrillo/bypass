@@ -87,7 +87,6 @@
     
     if (currentElement == nil) {
         currentElement = [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
-
         [currentElement setAccessibilityValue:@""];
     }
     

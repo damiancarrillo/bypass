@@ -30,6 +30,9 @@
  */
 @property (strong, nonatomic) NSString *markdown;
 
+/*!
+ * Settings that influence the visual display of the markdown.
+ */
 @property (strong, nonatomic) BPDisplaySettings *displaySettings;
 
 /*!
