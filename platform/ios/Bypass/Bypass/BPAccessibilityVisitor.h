@@ -28,7 +28,7 @@
  */
 - (id)initWithAccessibilityContainer:(id)container;
 
-- (NSArray *)accessibilityElements;
+- (NSArray *)accessibleElements;
 - (NSArray *)linkIndices;
 
 @end

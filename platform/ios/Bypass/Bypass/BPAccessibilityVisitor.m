@@ -28,7 +28,7 @@
     NSUInteger      _elementIndex;
     id              _accessibilityContainer;
     NSMutableArray *_accumulatedAccessibilityElements;
-    NSArray        *_accessibilityElements;
+    NSArray        *_accessibleElements;
     NSMutableArray *_accumulatedLinkIndices;
     NSArray        *_linkIndices;
 }
@@ -65,6 +65,11 @@
       didVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange
 {
+    if ([element text] == nil) {
+        // Element is structural and won't need an accessibility element
+        return 0;
+    }
+        
     BPAccessibilityElement *accessibilityElement =
         [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
     
@@ -74,13 +79,16 @@
 
     // Determine appropriate accessibility traits based on the element type
     
-    UIAccessibilityTraits accessibilityTraits;
+    UIAccessibilityTraits accessibilityTraits = UIAccessibilityTraitStaticText;
     
     if ([element elementType] == BPLink) {
-        accessibilityTraits = UIAccessibilityTraitStaticText | UIAccessibilityTraitLink;
+        accessibilityTraits |= UIAccessibilityTraitLink;
         [_accumulatedLinkIndices addObject:@(_elementIndex)];
-    } else {
-        accessibilityTraits = UIAccessibilityTraitStaticText;
+    }
+    
+    if ([[element parentElement] elementType] == BPHeader) {
+        // Header text has a parent element of type BPHeader
+        accessibilityTraits |= UIAccessibilityTraitHeader;
     }
     
     [accessibilityElement setAccessibilityTraits:accessibilityTraits];
@@ -91,13 +99,13 @@
     return 0;
 }
 
-- (NSArray *)accessibilityElements
+- (NSArray *)accessibleElements
 {
-    if (_accessibilityElements == nil) {
-        _accessibilityElements = [NSArray arrayWithArray:_accumulatedAccessibilityElements];
+    if (_accessibleElements == nil) {
+        _accessibleElements = [NSArray arrayWithArray:_accumulatedAccessibilityElements];
     }
     
-    return _accessibilityElements;
+    return _accessibleElements;
 }
 
 - (NSArray *)linkIndices
