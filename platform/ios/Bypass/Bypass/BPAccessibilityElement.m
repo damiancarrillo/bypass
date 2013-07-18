@@ -27,4 +27,29 @@
     return YES;
 }
 
+- (NSString *)description
+{
+    NSMutableArray *items = [NSMutableArray array];
+    
+    if ([self accessibilityLabel]) {
+        [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"accessibilityLabel", [self accessibilityLabel]]];
+    }
+    
+    if ([self accessibilityValue]) {
+        [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"accessibilityValue", [self accessibilityValue]]];
+    }
+    
+    if ([self accessibilityHint]) {
+        [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"accessibilityHint", [self accessibilityHint]]];
+    }
+    
+    [items addObject:[NSString stringWithFormat:@"%@ = %@", @"accessibilityFrame", NSStringFromCGRect([self accessibilityFrame])]];
+    [items addObject:[NSString stringWithFormat:@"%@ = %@", @"accessibilityTraits", @([self accessibilityTraits])]];
+    
+    NSString *description = [items componentsJoinedByString:@", "];
+    description = [NSString stringWithFormat:@"{%@}", description];
+    
+    return description;
+}
+
 @end

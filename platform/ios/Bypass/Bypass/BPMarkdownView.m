@@ -38,8 +38,8 @@ static const CGFloat kUIStandardMargin = 8.f;
 static const NSTimeInterval kReorientationDuration = 0.3;
 
 /*
- * Creates an array of CTFrameRefs (frames) from the given document. The frames are created 
- * at the given page size. This function will transfer the suggested content size back to the 
+ * Creates an array of CTFrameRefs (frames) from the given document. The frames are created
+ * at the given page size. This function will transfer the suggested content size back to the
  * caller through `suggestedContentSizeOut`. This is the size that the framesetter recommends
  * the container should have, and is based on the length of the body of attribited markdown.
  *
@@ -47,7 +47,7 @@ static const NSTimeInterval kReorientationDuration = 0.3;
  * whose height is CGFLOAT_MAX. This will size a single view to fit around the attributed text,
  * but it is not recommended for long strings because the entire view will be rendered in the
  * `drawRect` method.
- * 
+ *
  * \param document a document tree
  * \pageSize the size for a given page frame
  *
@@ -65,13 +65,13 @@ BPCreatePageFrames(BPDocument *document,
     BPAttributedTextVisitor* textVisitor = [[BPAttributedTextVisitor alloc] init];
     [walker addElementVisitor:textVisitor];
     
-    BPAccessibilityVisitor* accessVisitor = [[BPAccessibilityVisitor alloc] initWithAccessibilityContainer:accessibilityContainer];
-    [walker addElementVisitor:accessVisitor];
+    BPAccessibilityVisitor* accessibilityVisitor = [[BPAccessibilityVisitor alloc] initWithAccessibilityContainer:accessibilityContainer];
+    [walker addElementVisitor:accessibilityVisitor];
     
     [walker walkDocument:document];
     
-    *attributedTextOut = textVisitor.attributedText;
-    *accessibleElementsOut = accessVisitor.accessibleElements;
+    *attributedTextOut = [textVisitor attributedText];
+    *accessibleElementsOut = [accessibilityVisitor accessibleElements];
     
     CFAttributedStringRef attrText;
     attrText = (__bridge CFAttributedStringRef) *attributedTextOut;
@@ -117,9 +117,9 @@ BPCreatePageFrames(BPDocument *document,
         
         y += CGRectGetHeight(pageRect);
     }
-
+    
     CFRelease(framesetter);
-
+    
     return frames;
 }
 
@@ -181,11 +181,11 @@ BPCreatePageFrames(BPDocument *document,
     
     [self setAutoresizesSubviews:YES];
     [self setAutoresizingMask: UIViewAutoresizingFlexibleTopMargin
-                             | UIViewAutoresizingFlexibleRightMargin
-                             | UIViewAutoresizingFlexibleBottomMargin
-                             | UIViewAutoresizingFlexibleLeftMargin
-                             | UIViewAutoresizingFlexibleWidth
-                             | UIViewAutoresizingFlexibleHeight];
+     | UIViewAutoresizingFlexibleRightMargin
+     | UIViewAutoresizingFlexibleBottomMargin
+     | UIViewAutoresizingFlexibleLeftMargin
+     | UIViewAutoresizingFlexibleWidth
+     | UIViewAutoresizingFlexibleHeight];
 }
 
 - (void)layoutSubviews
@@ -222,8 +222,8 @@ BPCreatePageFrames(BPDocument *document,
     _markdown = markdown;
     _document = nil;
     for (BPMarkdownPageView *view in _pageViews) {
-      [view removeFromSuperview];
-}
+        [view removeFromSuperview];
+    }
     [_pageViews removeAllObjects];
 }
 
@@ -236,11 +236,11 @@ BPCreatePageFrames(BPDocument *document,
     /*
      In order to be flexible in the way that the text is rendered, this method's implementation
      is a bit wonky. The intent is to support views that render immediately and also to support
-     a two step process where the text is rendered into Core Text frames in the background and 
+     a two step process where the text is rendered into Core Text frames in the background and
      then those frames fill views that are inserted.
      
-            *** Please ensure that you thoroughly understand what is going ***
-            ***            on before attempting to change this.            ***
+     *** Please ensure that you thoroughly understand what is going ***
+     ***            on before attempting to change this.            ***
      
      */
     
@@ -250,7 +250,7 @@ BPCreatePageFrames(BPDocument *document,
         if (_document == nil) {
             _document = [_parser parse:_markdown];
         }
- 
+        
         [_parser parse:_markdown];
         CGSize pageSize = CGSizeMake(CGRectGetWidth([self frame]) - 2 * kUIStandardMargin,
                                      CGRectGetHeight([self frame]));
@@ -300,11 +300,11 @@ BPCreatePageFrames(BPDocument *document,
 }
 
 /*
- * Following from `renderMarkdownWithDuration:completion:`, this method will display the 
+ * Following from `renderMarkdownWithDuration:completion:`, this method will display the
  * populate a view with a frame that it is to display and add it as a subview.
  *
  * There are three cases that this must support:
- * 
+ *
  *   - Rendering text immediately when this view loads for the first time
  *   - Rendering text that fades in when this view loads text asynchronously
  *   - Rendering text after a device reorientation which has an animation, but the duration
@@ -339,7 +339,7 @@ BPCreatePageFrames(BPDocument *document,
                                                                        textFrame:textFrame];
         
         CFRelease(textFrame); // the textView took ownership, and the retain would be 2 at this point
-
+        
         [textView setTag:i + 1];
         [textView setAlpha:0.f];
         
@@ -387,8 +387,6 @@ BPCreatePageFrames(BPDocument *document,
 
 - (id)accessibilityElementAtIndex:(NSInteger)index
 {
-    NSLog(@"Showing accessibility element %d: %@", index, [[accessibleElements objectAtIndex:index] accessibilityValue]);
-    
     return [accessibleElements objectAtIndex:index];
 }
 

@@ -491,7 +491,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = "${BOOST_HOME}/";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -516,7 +516,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /usr/local/include/;
+				HEADER_SEARCH_PATHS = "${BOOST_HOME}/";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
@@ -527,6 +527,7 @@
 		5E5BC7CD16E0049900165503 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BOOST_HOME = /usr/local/include;
 				CLANG_CXX_LIBRARY = "libc++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BypassSample/BypassSample-Prefix.pch";
@@ -534,6 +535,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../Bypass/Bypass",
 				);
+				"HEADER_SEARCH_PATHS[arch=*]" = "$(inherited)";
 				INFOPLIST_FILE = "BypassSample/BypassSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
@@ -545,6 +547,7 @@
 		5E5BC7CE16E0049900165503 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BOOST_HOME = /usr/local/include;
 				CLANG_CXX_LIBRARY = "libc++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BypassSample/BypassSample-Prefix.pch";
