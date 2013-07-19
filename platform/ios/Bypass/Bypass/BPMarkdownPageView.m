@@ -21,6 +21,7 @@
 #import "BPAttributedTextVisitor.h"
 #import "BPDocument.h"
 #import "BPMarkdownPageView.h"
+#import "BPAccessibilityElement.h"
 
 #define SHOW_ATTRIBUTES_ON_TAP 0
 
@@ -36,10 +37,11 @@ BPContextFlipVertical(CGContextRef context, CGRect rect)
 
 @implementation BPMarkdownPageView
 {
-    CTFrameRef _textFrame;
+    CTFrameRef  _textFrame;
+    NSArray    *_accessibilityElements;
 }
 
-- (id)initWithFrame:(CGRect)frame textFrame:(CTFrameRef)textFrame
+- (id)initWithFrame:(CGRect)frame textFrame:(CTFrameRef)textFrame accessibilityElements:(NSArray *)accessibilityElements
 {
     self = [super initWithFrame:frame];
     
@@ -48,6 +50,7 @@ BPContextFlipVertical(CGContextRef context, CGRect rect)
         
         CFRetain(textFrame);
         _textFrame = textFrame;
+        _accessibilityElements = accessibilityElements;
     }
     
     return self;
@@ -69,6 +72,64 @@ BPContextFlipVertical(CGContextRef context, CGRect rect)
     BPContextFlipVertical(context, rect);
     
     CTFrameDraw(_textFrame, context);
+    
+    // Update the rect of accessibility elements
+    
+    CGRect relativeRect = [self convertRect:rect toView:[[self superview] superview]];
+    
+    CFArrayRef lines = CTFrameGetLines(_textFrame);
+    CGPoint lineOrigins[CFArrayGetCount(lines)];
+    CFRange lineRange = {0, 0};
+    
+    CTFrameGetLineOrigins(_textFrame, lineRange, lineOrigins);
+    
+    NSUInteger i, icnt = [_accessibilityElements count];
+    CFIndex j, jcnt = CFArrayGetCount(lines);
+    
+    for (i = 0, j = 0; i < icnt && j < jcnt; j++) {
+        CTLineRef line = CFArrayGetValueAtIndex(lines, j);
+        CGPoint lineOrigin = lineOrigins[j];
+        lineOrigin.x += CGRectGetMinX(relativeRect);
+        lineOrigin.y -= CGRectGetMinY(relativeRect);
+        
+        CFArrayRef glyphRuns = CTLineGetGlyphRuns(line);
+        CFIndex k, kcnt = CFArrayGetCount(glyphRuns);
+        for (k = 0; i < icnt && k < kcnt; k++) {
+            CTRunRef glyphRun = CFArrayGetValueAtIndex(glyphRuns, k);
+            CGContextRef context = UIGraphicsGetCurrentContext();
+            CGRect glyphRunFrame = CTRunGetImageBounds(glyphRun, context, CFRangeMake(0, 0));
+            CFRange glyphRunRange = CTRunGetStringRange(glyphRun);
+            CGRect absoluteGlyphRunFrame = CGRectOffset(glyphRunFrame, lineOrigin.x, CGRectGetHeight(rect) - lineOrigin.y);
+                        
+            BPAccessibilityElement *currentElement = _accessibilityElements[i];
+            CFRange currentElementTextRange = [currentElement textRange];
+            
+            // Correct the current accessibility element based on the active glyph run
+            
+            if (glyphRunRange.location > currentElementTextRange.location + currentElementTextRange.length) {
+                ++i;
+                
+                if (i >= icnt) {
+                    break; // bail
+                }
+                
+                currentElement = _accessibilityElements[i];
+            }
+            
+            CGRect previousAccessibilityFrame = [currentElement accessibilityFrame];
+            
+            if (CGRectEqualToRect(previousAccessibilityFrame, CGRectNull)) {
+                [currentElement setAccessibilityFrame:absoluteGlyphRunFrame];
+            } else {
+                CGRect expandedAccessibilityFrame = CGRectUnion(previousAccessibilityFrame, absoluteGlyphRunFrame);
+                [currentElement setAccessibilityFrame:expandedAccessibilityFrame];
+            }
+        }
+    }
+    
+    for (BPAccessibilityElement *element in _accessibilityElements) {
+        NSLog(@"Element frame: %@", NSStringFromCGRect([element accessibilityFrame]));
+    }
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event

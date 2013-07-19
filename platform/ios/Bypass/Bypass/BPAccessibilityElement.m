@@ -22,6 +22,17 @@
 
 @implementation BPAccessibilityElement
 
+- (id)initWithAccessibilityContainer:(id)container
+{
+    self = [super initWithAccessibilityContainer:container];
+    
+    if (self) {
+        [self setAccessibilityFrame:CGRectNull];
+    }
+    
+    return self;
+}
+
 - (BOOL)isAccessibilityElement
 {
     return YES;

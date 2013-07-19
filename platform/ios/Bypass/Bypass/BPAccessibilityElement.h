@@ -22,6 +22,6 @@
 #import "BPElement.h"
 
 @interface BPAccessibilityElement : UIAccessibilityElement
-@property (assign, nonatomic) NSRange textRange;
+@property (assign, nonatomic) CFRange textRange;
 @property (assign, nonatomic) BPElementType elementType;
 @end

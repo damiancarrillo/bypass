@@ -18,6 +18,7 @@
 //  limitations under the License.
 //
 
+#import <CoreText/CoreText.h>
 #import <UIKit/UIKit.h>
 #import "BPAccessibilityElement.h"
 #import "BPAccessibilityVisitor.h"
@@ -26,6 +27,7 @@
 @implementation BPAccessibilityVisitor
 {
     NSUInteger      _elementIndex;
+    NSUInteger      _characterIndex;
     id              _accessibilityContainer;
     NSMutableArray *_accumulatedAccessibleElements;
     NSArray        *_accessibleElements;
@@ -47,6 +49,7 @@
     
     if (self != nil) {
         _elementIndex = 0;
+        _characterIndex = 0;
         _accessibilityContainer = accessibilityContainer;
         _accumulatedAccessibleElements = [[NSMutableArray alloc] init];
         _accumulatedLinkIndices = [[NSMutableArray alloc] init];
@@ -76,13 +79,22 @@
     }
     
     if ([self element:element canBeCombinedWithElement:_previousElement]) {
-        BPAccessibilityElement *accessibleElement = [_accumulatedAccessibleElements lastObject];
-        NSString *concatenatedLabel = [@[[accessibleElement accessibilityLabel], trimmedText] componentsJoinedByString:@" "];
-        [accessibleElement setAccessibilityLabel:concatenatedLabel];
+        BPAccessibilityElement *acessibilityElement = [_accumulatedAccessibleElements lastObject];
+        NSString *concatenatedLabel = [@[[acessibilityElement accessibilityLabel], trimmedText] componentsJoinedByString:@" "];
+        [acessibilityElement setAccessibilityLabel:concatenatedLabel];
+        
+        CFRange textRange = [acessibilityElement textRange];
+        textRange.length += [trimmedText length];
     } else {
-        BPAccessibilityElement *accessibleElement = [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
-        [accessibleElement setElementType:[element elementType]];
-        [accessibleElement setAccessibilityLabel:trimmedText];
+        BPAccessibilityElement *accessibilityElement = [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
+        [accessibilityElement setElementType:[element elementType]];
+        [accessibilityElement setAccessibilityLabel:trimmedText];
+        
+        CFRange textRange;
+        textRange.location = _characterIndex;
+        textRange.length = [trimmedText length];
+        
+        [accessibilityElement setTextRange:textRange];
         
         UIAccessibilityTraits accessibilityTraits = UIAccessibilityTraitStaticText;
         
@@ -99,10 +111,11 @@
             [_accumulatedLinkIndices addObject:@(_elementIndex)];
         }
         
-        [accessibleElement setAccessibilityTraits:accessibilityTraits];
-        [_accumulatedAccessibleElements addObject:accessibleElement];
+        [accessibilityElement setAccessibilityTraits:accessibilityTraits];
+        [_accumulatedAccessibleElements addObject:accessibilityElement];
     }
 
+    _characterIndex += [trimmedText length];
     _previousElement = element;
     
     return 0;

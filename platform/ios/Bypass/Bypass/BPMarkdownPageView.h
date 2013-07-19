@@ -28,7 +28,7 @@
 @interface BPMarkdownPageView : UIView
 @property (weak, nonatomic) id<BPMarkdownPageViewLinkDelegate> linkDelegate;
 
-- (id)initWithFrame:(CGRect)frame textFrame:(CTFrameRef)textFrame;
+- (id)initWithFrame:(CGRect)frame textFrame:(CTFrameRef)textFrame accessibilityElements:(NSArray *)accessibilityElements;
 
 @end
 

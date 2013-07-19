@@ -82,9 +82,9 @@ BPCreatePageFrames(BPDocument *document,
                                                                 len,
                                                                 attrText);
     
-    CFMutableArrayRef frames = CFArrayCreateMutable(kCFAllocatorDefault,
-                                                    0,
-                                                    &kCFTypeArrayCallBacks);
+    CFMutableArrayRef pageFrames = CFArrayCreateMutable(kCFAllocatorDefault,
+                                                        0,
+                                                        &kCFTypeArrayCallBacks);
     CTFramesetterRef framesetter;
     framesetter = CTFramesetterCreateWithAttributedString(mutableAttributedText);
     CFRelease(mutableAttributedText);
@@ -110,17 +110,17 @@ BPCreatePageFrames(BPDocument *document,
         CTFrameRef textFrame = CTFramesetterCreateFrame(framesetter, textRange, path, NULL);
         CGPathRelease(path);
         
-        CFArrayAppendValue(frames, textFrame);
+        CFArrayAppendValue(pageFrames, textFrame);
         
         CFRange visibleRange = CTFrameGetVisibleStringRange(textFrame);
         textRange.location += visibleRange.length;
         
         y += CGRectGetHeight(pageRect);
     }
-    
+
     CFRelease(framesetter);
     
-    return frames;
+    return pageFrames;
 }
 
 @interface BPMarkdownView () <BPMarkdownViewLinkDelegate, BPMarkdownPageViewLinkDelegate>
@@ -134,7 +134,7 @@ BPCreatePageFrames(BPDocument *document,
     NSArray            *_previousPageViews;
     CGRect              _previousFrame;
     NSAttributedString *_attributedText;
-    NSArray            *accessibleElements;
+    NSArray            *_accessibleElements;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -270,7 +270,7 @@ BPCreatePageFrames(BPDocument *document,
                                                    self);
         
         _attributedText = attributedText;
-        accessibleElements = accessibilityElements;
+        _accessibleElements = accessibilityElements;
         
         if ([self isAsynchronous]) {
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -336,7 +336,8 @@ BPCreatePageFrames(BPDocument *document,
         }
         
         BPMarkdownPageView *textView = [[BPMarkdownPageView alloc] initWithFrame:textViewFrame
-                                                                       textFrame:textFrame];
+                                                                       textFrame:textFrame
+                                                           accessibilityElements:_accessibleElements];
         
         CFRelease(textFrame); // the textView took ownership, and the retain would be 2 at this point
         
@@ -382,17 +383,17 @@ BPCreatePageFrames(BPDocument *document,
 
 - (NSInteger)accessibilityElementCount
 {
-    return [accessibleElements count];
+    return [_accessibleElements count];
 }
 
 - (id)accessibilityElementAtIndex:(NSInteger)index
 {
-    return [accessibleElements objectAtIndex:index];
+    return [_accessibleElements objectAtIndex:index];
 }
 
 - (NSInteger)indexOfAccessibilityElement:(id)element
 {
-    return [accessibleElements indexOfObject:element];
+    return [_accessibleElements indexOfObject:element];
 }
 
 @end
