@@ -41,6 +41,7 @@
 - (NSString *)description
 {
     NSMutableArray *items = [NSMutableArray array];
+    [items addObject:[NSString stringWithFormat:@"{%ld, %ld}", _textRange.location, _textRange.length]];
     
     if ([self accessibilityLabel]) {
         [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"accessibilityLabel", [self accessibilityLabel]]];

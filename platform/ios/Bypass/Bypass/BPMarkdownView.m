@@ -25,6 +25,7 @@
 #import "BPDisplaySettings.h"
 #import "BPElementWalker.h"
 #import "BPAttributedTextVisitor.h"
+#import "BPAccessibilityElement.h"
 #import "BPAccessibilityVisitor.h"
 
 /*
@@ -271,6 +272,8 @@ BPCreatePageFrames(BPDocument *document,
         
         _attributedText = attributedText;
         _accessibleElements = accessibilityElements;
+        
+        NSLog(@"%@", _accessibleElements);
         
         if ([self isAsynchronous]) {
             dispatch_sync(dispatch_get_main_queue(), ^{

@@ -23,6 +23,7 @@
 #import "BPAccessibilityElement.h"
 #import "BPAccessibilityVisitor.h"
 #import "BPElement.h"
+#import "BPElement+Combining.h"
 
 @implementation BPAccessibilityVisitor
 {
@@ -75,24 +76,26 @@
         
         // Element is structural and won't need an accessibility element
         
+        _characterIndex += [[element text] length];
+        
         return 0;
     }
     
-    if ([self element:element canBeCombinedWithElement:_previousElement]) {
+    if ([element canBeCombinedWithElement:_previousElement]) {
         BPAccessibilityElement *acessibilityElement = [_accumulatedAccessibleElements lastObject];
-        NSString *concatenatedLabel = [@[[acessibilityElement accessibilityLabel], trimmedText] componentsJoinedByString:@" "];
+        NSString *concatenatedLabel = [@[[acessibilityElement accessibilityLabel], [element text]] componentsJoinedByString:@" "];
         [acessibilityElement setAccessibilityLabel:concatenatedLabel];
         
         CFRange textRange = [acessibilityElement textRange];
-        textRange.length += [trimmedText length];
+        textRange.length += [[element text] length];
     } else {
         BPAccessibilityElement *accessibilityElement = [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
         [accessibilityElement setElementType:[element elementType]];
-        [accessibilityElement setAccessibilityLabel:trimmedText];
+        [accessibilityElement setAccessibilityLabel:[element text]];
         
         CFRange textRange;
         textRange.location = _characterIndex;
-        textRange.length = [trimmedText length];
+        textRange.length = [[element text] length];
         
         [accessibilityElement setTextRange:textRange];
         
@@ -115,34 +118,10 @@
         [_accumulatedAccessibleElements addObject:accessibilityElement];
     }
 
-    _characterIndex += [trimmedText length];
+    _characterIndex += [[element text] length];
     _previousElement = element;
     
     return 0;
-}
-
-- (BOOL)element:(BPElement *)a canBeCombinedWithElement:(BPElement *)b
-{
-    BOOL elementsCanBeCombined = NO;
-    
-    if ([a elementType] != BPLink
-        && [b elementType] != BPLink
-        && ![a isBlockElement]
-        && ![b isBlockElement]
-        && [[a parentElement] elementType] == [[b parentElement] elementType]
-        && [[a parentElement] elementType] != BPListItem) {
-        
-        elementsCanBeCombined = YES;
-        
-        for (id ak in [[[a parentElement] attributes] allKeys]) {
-            if (![[[b parentElement] attributes][ak] isEqual:[[a parentElement] attributes][ak]]) {
-                elementsCanBeCombined = NO;
-                break;
-            }
-        }
-    }
-    
-    return elementsCanBeCombined;
 }
 
 - (NSArray *)accessibleElements
