@@ -56,20 +56,20 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     }
 }
 
-- (int)elementWalker:(BPElementWalker *)elementWalker
-     didVisitElement:(BPElement *)element
-       withTextRange:(NSRange)textRange
+- (NSInteger)elementWalker:(BPElementWalker *)elementWalker
+           didVisitElement:(BPElement *)element
+             withTextRange:(NSRange)textRange
 {
     return [self convertElement:element toTarget:_attributedText range:textRange];
 }
 
 #pragma mark Rendering
 
-- (int)convertElement:(BPElement *)element
-             toTarget:(NSMutableAttributedString *)target
-                range:(NSRange)effectiveRange
+- (NSInteger)convertElement:(BPElement *)element
+                   toTarget:(NSMutableAttributedString *)target
+                      range:(NSRange)effectiveRange
 {
-    int insertedCharacters = 0;
+    NSInteger insertedCharacters = 0;
     
     BPElementType elementType = [element elementType];
     
@@ -123,7 +123,7 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
 
 #pragma mark Character Insertion
 
-- (int)insertNewlineIntoTarget:(NSMutableAttributedString*) target
+- (NSInteger)insertNewlineIntoTarget:(NSMutableAttributedString*) target
                        atIndex:(int) index
 {
     [target insertAttributedString:[[NSMutableAttributedString alloc] initWithString:@"\n"] atIndex:index];
@@ -131,7 +131,7 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     return 1;
 }
 
-- (int)appendNewlineOntoTarget:(NSMutableAttributedString *)target
+- (NSInteger)appendNewlineOntoTarget:(NSMutableAttributedString *)target
 {
     [target appendAttributedString:[[NSMutableAttributedString alloc] initWithString:@"\n"]];
     
@@ -262,11 +262,11 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     [target addAttributes:attributes range:effectiveRange];
 }
 
-- (int)renderBlockCodeElement:(BPElement *)element
-                      inRange:(NSRange)effectiveRange
-                     toTarget:(NSMutableAttributedString *)target
+- (NSInteger)renderBlockCodeElement:(BPElement *)element
+                            inRange:(NSRange)effectiveRange
+                           toTarget:(NSMutableAttributedString *)target
 {
-    int insertedCharacters = 0;
+    NSInteger insertedCharacters = 0;
     
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
     attributes[NSFontAttributeName] = [_displaySettings monospaceFont];
@@ -305,11 +305,11 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     [target addAttributes:attributes range:effectiveRange];
 }
 
-- (int)renderListItemElement:(BPElement *)element
-                     inRange:(NSRange)effectiveRange
-                    toTarget:(NSMutableAttributedString *)target
+- (NSInteger)renderListItemElement:(BPElement *)element
+                           inRange:(NSRange)effectiveRange
+                          toTarget:(NSMutableAttributedString *)target
 {
-    int insertedCharacters = 0;
+    NSInteger insertedCharacters = 0;
     
     NSUInteger level = 0;
     BPElement *inspectedElement = [[element parentElement] parentElement];

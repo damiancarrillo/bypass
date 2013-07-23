@@ -15,10 +15,15 @@
     BOOL elementsCanBeCombined = NO;
     
     if (otherElement
+        && ![self isBlockElement]
         && [self elementType]         != BPLink
         && [otherElement elementType] != BPLink
         && [self elementType]         != BPAutoLink
-        && [otherElement elementType] != BPAutoLink) {
+        && [otherElement elementType] != BPAutoLink
+        && [self elementType]         != BPList
+        && [otherElement elementType] != BPList
+        && [self elementType]         != BPListItem
+        && [otherElement elementType] != BPListItem) {
         elementsCanBeCombined = YES;
     }
     
