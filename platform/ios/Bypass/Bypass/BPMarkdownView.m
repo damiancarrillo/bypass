@@ -63,16 +63,17 @@ BPCreatePageFrames(BPDocument *document,
                    id accessibilityContainer) {
     BPElementWalker* walker = [[BPElementWalker alloc] init];
     
-    BPAttributedTextVisitor* textVisitor = [[BPAttributedTextVisitor alloc] init];
+    BPAttributedTextVisitor * textVisitor = [[BPAttributedTextVisitor alloc] init];
+    [textVisitor setAccessibilityContainer:accessibilityContainer];
     [walker addElementVisitor:textVisitor];
     
-    BPAccessibilityVisitor* accessibilityVisitor = [[BPAccessibilityVisitor alloc] initWithAccessibilityContainer:accessibilityContainer];
-    [walker addElementVisitor:accessibilityVisitor];
+//    BPAccessibilityVisitor* accessibilityVisitor = [[BPAccessibilityVisitor alloc] initWithAccessibilityContainer:accessibilityContainer];
+//    [walker addElementVisitor:accessibilityVisitor];
     
     [walker walkDocument:document];
     
     *attributedTextOut = [textVisitor attributedText];
-    *accessibleElementsOut = [accessibilityVisitor accessibleElements];
+    *accessibleElementsOut = [textVisitor accessibilityElements];
     
     CFAttributedStringRef attrText;
     attrText = (__bridge CFAttributedStringRef) *attributedTextOut;

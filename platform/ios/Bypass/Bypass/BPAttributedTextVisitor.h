@@ -30,6 +30,8 @@
 OBJC_EXPORT NSString* const BPLinkStyleAttributeName;
 
 @interface BPAttributedTextVisitor : NSObject <BPElementVisitor>
+@property (assign, nonatomic) id accessibilityContainer;
+@property (readonly) NSArray *accessibilityElements;
 @property (strong, nonatomic) BPDisplaySettings *displaySettings;
 @property (strong, nonatomic) NSMutableAttributedString *attributedText;
 @end
