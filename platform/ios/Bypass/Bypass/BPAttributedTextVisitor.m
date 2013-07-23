@@ -342,9 +342,7 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
                                        NSForegroundColorAttributeName: bulletColor};
     
     NSAttributedString *attributedBullet;
-    attributedBullet = [[NSAttributedString alloc] initWithString:@"• "
-                                                       attributes:bulletAttributes];
-    
+    attributedBullet = [[NSAttributedString alloc] initWithString:@"• " attributes:bulletAttributes];
     [target insertAttributedString:attributedBullet atIndex:effectiveRange.location];
     
     insertedCharacters += 2;
@@ -446,7 +444,7 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
         
         if ([element elementType] == BPLink || [element elementType] == BPAutoLink) {
             [accessibilityElement setAccessibilityTraits:UIAccessibilityTraitLink];
-        } else if ([element elementType] == BPHeader) {
+        } else if ([[element parentElement] elementType] == BPHeader) {
             [accessibilityElement setAccessibilityTraits:UIAccessibilityTraitHeader];
         }
         

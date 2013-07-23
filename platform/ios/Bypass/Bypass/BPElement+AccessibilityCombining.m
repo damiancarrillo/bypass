@@ -16,14 +16,14 @@
     
     if (otherElement
         && ![self isBlockElement]
-        && [self elementType]         != BPLink
-        && [otherElement elementType] != BPLink
-        && [self elementType]         != BPAutoLink
-        && [otherElement elementType] != BPAutoLink
-        && [self elementType]         != BPList
-        && [otherElement elementType] != BPList
-        && [self elementType]         != BPListItem
-        && [otherElement elementType] != BPListItem) {
+        && [self elementType]                 != BPLink
+        && [otherElement elementType]         != BPLink
+        && [self elementType]                 != BPAutoLink
+        && [otherElement elementType]         != BPAutoLink
+        && [[self parentElement] elementType] != BPList
+        && [[self parentElement] elementType] != BPListItem
+        && [self elementType]                 != BPList
+        && [self elementType]                 != BPListItem) {
         elementsCanBeCombined = YES;
     }
     
