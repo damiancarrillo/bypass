@@ -313,7 +313,7 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     
     NSUInteger level = 0;
     BPElement *inspectedElement = [[element parentElement] parentElement];
-    NSMutableString *indentation = [NSMutableString  string];
+    NSMutableString *indentation = [NSMutableString string];
     
     while ([inspectedElement elementType] == BPList || [inspectedElement elementType] == BPListItem) {
         if ([inspectedElement elementType] == BPList) {
@@ -355,13 +355,11 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
                                             NSParagraphStyleAttributeName: paragraphStyle};
     
     NSAttributedString *attributedIndentation;
-    attributedIndentation = [[NSAttributedString alloc] initWithString:indentation
-                                                            attributes:indentationAttributes];
+    attributedIndentation = [[NSAttributedString alloc] initWithString:indentation attributes:indentationAttributes];
     [target insertAttributedString:attributedIndentation atIndex:effectiveRange.location];
     insertedCharacters += [attributedIndentation length];
     
-    if (([[[element parentElement] parentElement] elementType] != BPListItem)
-        || (element != [[[element parentElement] childElements] lastObject])) {
+    if (([[[element parentElement] parentElement] elementType] != BPListItem) || (element != [[[element parentElement] childElements] lastObject])) {
         insertedCharacters += [self appendNewlineOntoTarget:target];
     }
     
@@ -423,35 +421,40 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
 
 - (void)createAccessibilityElementForElement:(BPElement *)element forText:(NSString *)text
 {
-    BPAccessibilityElement *accessibilityElement;
     
-    if ([element canBeCombinedWithElement:_previousElement]) {
-        accessibilityElement = [_accumulatedAccessibilityElements lastObject];
+    // Ensure that the element is not structural
+    
+    if ([[text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0) {
+        BPAccessibilityElement *accessibilityElement;
         
-        CFRange textRange = [accessibilityElement textRange];
-        textRange.length += [text length];
-        
-        [accessibilityElement setTextRange:textRange];
-        
-        NSMutableString *combinedText = [NSMutableString stringWithString:[accessibilityElement accessibilityLabel]];
-        [combinedText appendString:text];
-        
-        [accessibilityElement setAccessibilityLabel:combinedText];
-    } else {
-        accessibilityElement = [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
-        [accessibilityElement setTextRange:CFRangeMake([_attributedText length], [text length])];
-        [accessibilityElement setAccessibilityLabel:text];
-        
-        if ([element elementType] == BPLink || [element elementType] == BPAutoLink) {
-            [accessibilityElement setAccessibilityTraits:UIAccessibilityTraitLink];
-        } else if ([[element parentElement] elementType] == BPHeader) {
-            [accessibilityElement setAccessibilityTraits:UIAccessibilityTraitHeader];
+        if ([element canBeCombinedWithElement:_previousElement]) {
+            accessibilityElement = [_accumulatedAccessibilityElements lastObject];
+            
+            CFRange textRange = [accessibilityElement textRange];
+            textRange.length += [text length];
+            
+            [accessibilityElement setTextRange:textRange];
+            
+            NSMutableString *combinedText = [NSMutableString stringWithString:[accessibilityElement accessibilityLabel]];
+            [combinedText appendString:text];
+            
+            [accessibilityElement setAccessibilityLabel:combinedText];
+        } else {
+            accessibilityElement = [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
+            [accessibilityElement setTextRange:CFRangeMake([_attributedText length], [text length])];
+            [accessibilityElement setAccessibilityLabel:text];
+            
+            if ([element elementType] == BPLink || [element elementType] == BPAutoLink) {
+                [accessibilityElement setAccessibilityTraits:UIAccessibilityTraitLink];
+            } else if ([[element parentElement] elementType] == BPHeader) {
+                [accessibilityElement setAccessibilityTraits:UIAccessibilityTraitHeader];
+            }
+            
+            [_accumulatedAccessibilityElements addObject:accessibilityElement];
         }
-        
-        [_accumulatedAccessibilityElements addObject:accessibilityElement];
-    }
 
-    _previousElement = element;
+        _previousElement = element;
+    }
 }
 
 @end
