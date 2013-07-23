@@ -22,12 +22,14 @@
 #import "BPDisplaySettings.h"
 #import "BPAttributedTextVisitor.h"
 #import "BPAccessibilityElement.h"
+#import "BPElement+AccessibilityCombining.h"
 
 NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
 
 @interface BPAttributedTextVisitor ()
 @property (nonatomic) BOOL renderedFirstParagraph;
-@property (strong, nonatomic) NSMutableArray *accumulatedAccessibleElements;
+@property (strong, nonatomic) NSMutableArray *accumulatedAccessibilityElements;
+@property (strong, nonatomic) BPElement *previousElement; // for accessibility element combining
 @end
 
 @implementation BPAttributedTextVisitor
@@ -39,7 +41,7 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     if ((self = [super init])) {
         _displaySettings = [[BPDisplaySettings alloc] init];
         _attributedText = [[NSMutableAttributedString alloc] init];
-        _accumulatedAccessibleElements = [NSMutableArray array];
+        _accumulatedAccessibilityElements = [NSMutableArray array];
 	}
 
     return self;
@@ -49,7 +51,9 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
      willVisitElement:(BPElement *)element
         withTextRange:(NSRange)textRange
 {
-    // do nothing
+    if ([element isBlockElement]) {
+        _previousElement = nil;
+    }
 }
 
 - (int)elementWalker:(BPElementWalker *)elementWalker
@@ -171,18 +175,7 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
     }
     
     if (text != nil) {
-        BPAccessibilityElement *accessibilityElement = [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
-        [accessibilityElement setTextRange:CFRangeMake([_attributedText length], [text length])];
-        [accessibilityElement setAccessibilityLabel:text];
-        
-        if ([element elementType] == BPLink || [element elementType] == BPAutoLink) {
-            [element setAccessibilityTraits:UIAccessibilityTraitLink];
-            [element setAccessibilityValue:[element attributes][@"link"]];
-        } else if ([element elementType] == BPHeader) {
-            [element setAccessibilityTraits:UIAccessibilityTraitHeader];
-        }
-        
-        [_accumulatedAccessibleElements addObject:accessibilityElement];
+        [self createAccessibilityElementForElement:element forText:text];
         
         NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text
                                                                              attributes:attributes];
@@ -424,10 +417,44 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
 - (NSArray *)accessibilityElements
 {
     if (_accessibilityElements == nil) {
-        _accessibilityElements = [NSArray arrayWithArray:_accumulatedAccessibleElements];
+        _accessibilityElements = [NSArray arrayWithArray:_accumulatedAccessibilityElements];
     }
     
     return _accessibilityElements;
+}
+
+- (void)createAccessibilityElementForElement:(BPElement *)element forText:(NSString *)text
+{
+    BPAccessibilityElement *accessibilityElement;
+    
+    if ([element canBeCombinedWithElement:_previousElement]) {
+        accessibilityElement = [_accumulatedAccessibilityElements lastObject];
+        
+        CFRange textRange = [accessibilityElement textRange];
+        textRange.length += [text length];
+        
+        [accessibilityElement setTextRange:textRange];
+        
+        NSMutableString *combinedText = [NSMutableString stringWithString:[accessibilityElement accessibilityLabel]];
+        [combinedText appendString:text];
+        
+        [accessibilityElement setAccessibilityLabel:combinedText];
+    } else {
+        accessibilityElement = [[BPAccessibilityElement alloc] initWithAccessibilityContainer:_accessibilityContainer];
+        [accessibilityElement setTextRange:CFRangeMake([_attributedText length], [text length])];
+        [accessibilityElement setAccessibilityLabel:text];
+        
+        if ([element elementType] == BPLink || [element elementType] == BPAutoLink) {
+            [element setAccessibilityTraits:UIAccessibilityTraitLink];
+            [element setAccessibilityValue:[element attributes][@"link"]];
+        } else if ([element elementType] == BPHeader) {
+            [element setAccessibilityTraits:UIAccessibilityTraitHeader];
+        }
+        
+        [_accumulatedAccessibilityElements addObject:accessibilityElement];
+    }
+
+    _previousElement = element;
 }
 
 @end

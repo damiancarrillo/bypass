@@ -1,5 +1,5 @@
 //
-//  BPElement+Combining.h
+//  BPElement+AccessibilityCombining.h
 //  Bypass
 //
 //  Created by Damian Carrillo on 7/19/13.
@@ -8,7 +8,7 @@
 
 #import "BPElement.h"
 
-@interface BPElement (Combining)
+@interface BPElement (AccessibilityCombining)
 
 - (BOOL)canBeCombinedWithElement:(BPElement *)otherElement;
 

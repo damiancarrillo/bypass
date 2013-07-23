@@ -22,7 +22,7 @@
 #import "BPDocument.h"
 #import "BPMarkdownPageView.h"
 #import "BPAccessibilityElement.h"
-#import "BPElement+Combining.h"
+#import "BPElement+AccessibilityCombining.h"
 
 #define SHOW_ATTRIBUTES_ON_TAP 0
 
@@ -125,6 +125,8 @@ BPContextFlipVertical(CGContextRef context, CGRect rect)
             }
         }
     }
+    
+    NSLog(@"%@", _accessibilityElements);
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event

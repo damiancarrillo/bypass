@@ -38,8 +38,8 @@
 		5E993C2616FD027300120305 /* BPAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E993C2516FD027300120305 /* BPAccessibilityElement.m */; };
 		5E993C2816FD183C00120305 /* BPAccessibilityVisitorTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E993C2716FD183C00120305 /* BPAccessibilityVisitorTests.mm */; };
 		5E993C2916FD197300120305 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5BC84F16E005E700165503 /* UIKit.framework */; };
-		5ED830341799D6D0009B2857 /* BPElement+Combining.m in Sources */ = {isa = PBXBuildFile; fileRef = 5ED830331799D6D0009B2857 /* BPElement+Combining.m */; };
-		5ED830381799DC22009B2857 /* BPElement+Combining.m in Sources */ = {isa = PBXBuildFile; fileRef = 5ED830331799D6D0009B2857 /* BPElement+Combining.m */; };
+		5ED830341799D6D0009B2857 /* BPElement+AccessibilityCombining.m in Sources */ = {isa = PBXBuildFile; fileRef = 5ED830331799D6D0009B2857 /* BPElement+AccessibilityCombining.m */; };
+		5ED830381799DC22009B2857 /* BPElement+AccessibilityCombining.m in Sources */ = {isa = PBXBuildFile; fileRef = 5ED830331799D6D0009B2857 /* BPElement+AccessibilityCombining.m */; };
 		6BE4F72716F0E9D100670C16 /* BPMarkdownPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE4F72616F0E9D100670C16 /* BPMarkdownPageView.m */; };
 		C85A593F1738523600B9C2F2 /* BPAttributedTextVisitor.m in Sources */ = {isa = PBXBuildFile; fileRef = C85A593E1738523600B9C2F2 /* BPAttributedTextVisitor.m */; };
 /* End PBXBuildFile section */
@@ -118,8 +118,8 @@
 		5E993C2416FD027300120305 /* BPAccessibilityElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPAccessibilityElement.h; sourceTree = "<group>"; };
 		5E993C2516FD027300120305 /* BPAccessibilityElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPAccessibilityElement.m; sourceTree = "<group>"; };
 		5E993C2716FD183C00120305 /* BPAccessibilityVisitorTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BPAccessibilityVisitorTests.mm; sourceTree = "<group>"; };
-		5ED830321799D6D0009B2857 /* BPElement+Combining.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BPElement+Combining.h"; sourceTree = "<group>"; };
-		5ED830331799D6D0009B2857 /* BPElement+Combining.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BPElement+Combining.m"; sourceTree = "<group>"; };
+		5ED830321799D6D0009B2857 /* BPElement+AccessibilityCombining.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BPElement+AccessibilityCombining.h"; sourceTree = "<group>"; };
+		5ED830331799D6D0009B2857 /* BPElement+AccessibilityCombining.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BPElement+AccessibilityCombining.m"; sourceTree = "<group>"; };
 		6BE4F72516F0E9D100670C16 /* BPMarkdownPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPMarkdownPageView.h; sourceTree = "<group>"; };
 		6BE4F72616F0E9D100670C16 /* BPMarkdownPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPMarkdownPageView.m; sourceTree = "<group>"; };
 		C85A593D1738521800B9C2F2 /* BPAttributedTextVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPAttributedTextVisitor.h; sourceTree = "<group>"; };
@@ -271,8 +271,8 @@
 				5E993C2516FD027300120305 /* BPAccessibilityElement.m */,
 				5E993C2116FD00C200120305 /* BPAccessibilityVisitor.h */,
 				5E993C2216FD00C200120305 /* BPAccessibilityVisitor.m */,
-				5ED830321799D6D0009B2857 /* BPElement+Combining.h */,
-				5ED830331799D6D0009B2857 /* BPElement+Combining.m */,
+				5ED830321799D6D0009B2857 /* BPElement+AccessibilityCombining.h */,
+				5ED830331799D6D0009B2857 /* BPElement+AccessibilityCombining.m */,
 			);
 			name = Accessibility;
 			sourceTree = "<group>";
@@ -425,7 +425,7 @@
 				5E993C2316FD00C200120305 /* BPAccessibilityVisitor.m in Sources */,
 				5E993C2616FD027300120305 /* BPAccessibilityElement.m in Sources */,
 				C85A593F1738523600B9C2F2 /* BPAttributedTextVisitor.m in Sources */,
-				5ED830341799D6D0009B2857 /* BPElement+Combining.m in Sources */,
+				5ED830341799D6D0009B2857 /* BPElement+AccessibilityCombining.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,7 +441,7 @@
 				5E3C9F8416FCD2F7000384CB /* BPWalkEventAccumulator.m in Sources */,
 				5E993C2016FCFB1000120305 /* BPTextVisitorTests.mm in Sources */,
 				5E993C2816FD183C00120305 /* BPAccessibilityVisitorTests.mm in Sources */,
-				5ED830381799DC22009B2857 /* BPElement+Combining.m in Sources */,
+				5ED830381799DC22009B2857 /* BPElement+AccessibilityCombining.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
