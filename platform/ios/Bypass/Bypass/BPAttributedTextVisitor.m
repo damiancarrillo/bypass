@@ -445,10 +445,9 @@ NSString *const BPLinkStyleAttributeName = @"NSLinkAttributeName";
         [accessibilityElement setAccessibilityLabel:text];
         
         if ([element elementType] == BPLink || [element elementType] == BPAutoLink) {
-            [element setAccessibilityTraits:UIAccessibilityTraitLink];
-            [element setAccessibilityValue:[element attributes][@"link"]];
+            [accessibilityElement setAccessibilityTraits:UIAccessibilityTraitLink];
         } else if ([element elementType] == BPHeader) {
-            [element setAccessibilityTraits:UIAccessibilityTraitHeader];
+            [accessibilityElement setAccessibilityTraits:UIAccessibilityTraitHeader];
         }
         
         [_accumulatedAccessibilityElements addObject:accessibilityElement];

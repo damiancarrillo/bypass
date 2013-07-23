@@ -110,7 +110,8 @@ BPContextFlipVertical(CGContextRef context, CGRect rect)
             }
             
             if (glyphRunRange.location >= [element textRange].location) {
-                CGRect glyphRunRect = CGRectMake(CGRectGetMinX(lineBounds) + lineOrigins[lineIndex].x,
+                const CGPoint glyphRunPosition = *CTRunGetPositionsPtr(glyphRun);
+                CGRect glyphRunRect = CGRectMake(CGRectGetMinX(lineBounds) + lineOrigins[lineIndex].x + glyphRunPosition.x,
                                                  CGRectGetMinY(lineBounds) + lineOrigins[lineIndex].y,
                                                  0.f,
                                                  0.f);
