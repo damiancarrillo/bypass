@@ -41,22 +41,22 @@
 - (NSString *)description
 {
     NSMutableArray *items = [NSMutableArray array];
-    [items addObject:[NSString stringWithFormat:@"{%ld, %ld}", _textRange.location, _textRange.length]];
+    [items addObject:[NSString stringWithFormat:@"{%ld - %ld}", _textRange.location, _textRange.location + _textRange.length - 1]];
+    
+    [items addObject:[NSString stringWithFormat:@"%@ = %@", @"frame", NSStringFromCGRect([self accessibilityFrame])]];
+    [items addObject:[NSString stringWithFormat:@"%@ = %@", @"traits", @([self accessibilityTraits])]];
     
     if ([self accessibilityLabel]) {
-        [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"accessibilityLabel", [self accessibilityLabel]]];
+        [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"label", [self accessibilityLabel]]];
     }
     
     if ([self accessibilityValue]) {
-        [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"accessibilityValue", [self accessibilityValue]]];
+        [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"value", [self accessibilityValue]]];
     }
     
     if ([self accessibilityHint]) {
-        [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"accessibilityHint", [self accessibilityHint]]];
+        [items addObject:[NSString stringWithFormat:@"%@ = '%@'", @"hint", [self accessibilityHint]]];
     }
-    
-    [items addObject:[NSString stringWithFormat:@"%@ = %@", @"accessibilityFrame", NSStringFromCGRect([self accessibilityFrame])]];
-    [items addObject:[NSString stringWithFormat:@"%@ = %@", @"accessibilityTraits", @([self accessibilityTraits])]];
     
     NSString *description = [items componentsJoinedByString:@", "];
     description = [NSString stringWithFormat:@"{%@}", description];

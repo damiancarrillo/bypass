@@ -26,7 +26,6 @@
 #import "BPElementWalker.h"
 #import "BPAttributedTextVisitor.h"
 #import "BPAccessibilityElement.h"
-#import "BPAccessibilityVisitor.h"
 
 /*
  * The standard margin of the UIKit views. This value was based on human inspection.
@@ -66,11 +65,9 @@ BPCreatePageFrames(BPDocument *document,
     BPAttributedTextVisitor * textVisitor = [[BPAttributedTextVisitor alloc] init];
     [textVisitor setAccessibilityContainer:accessibilityContainer];
     [walker addElementVisitor:textVisitor];
-    
-//    BPAccessibilityVisitor* accessibilityVisitor = [[BPAccessibilityVisitor alloc] initWithAccessibilityContainer:accessibilityContainer];
-//    [walker addElementVisitor:accessibilityVisitor];
-    
     [walker walkDocument:document];
+    
+    NSLog(@"%@", [[textVisitor attributedText] string]);
     
     *attributedTextOut = [textVisitor attributedText];
     *accessibleElementsOut = [textVisitor accessibilityElements];
@@ -273,8 +270,6 @@ BPCreatePageFrames(BPDocument *document,
         
         _attributedText = attributedText;
         _accessibleElements = accessibilityElements;
-        
-        NSLog(@"%@", _accessibleElements);
         
         if ([self isAsynchronous]) {
             dispatch_sync(dispatch_get_main_queue(), ^{

@@ -79,6 +79,8 @@ BPContextFlipVertical(CGContextRef context, CGRect rect)
 
 - (void)updateAccessibilityFramesWithRect:(CGRect)rect
 {
+    NSMutableArray *runRanges = [NSMutableArray array];
+    
     CGRect absoluteRect = [self convertRect:rect toView:nil];
  
     NSEnumerator *elementEnumerator = [_accessibilityElements objectEnumerator];
@@ -97,35 +99,42 @@ BPContextFlipVertical(CGContextRef context, CGRect rect)
         CFIndex runIndex, runCount = CFArrayGetCount(runs);
         for (runIndex = 0; runIndex < runCount && element; runIndex++) {
             CTRunRef glyphRun = CFArrayGetValueAtIndex(runs, runIndex);
-            
             CFRange glyphRunRange = CTRunGetStringRange(glyphRun);
-            if (glyphRunRange.location > [element textRange].location + [element textRange].length) {
+            
+            [runRanges addObject:[NSString stringWithFormat:@"%ld-%ld",
+                                  glyphRunRange.location,
+                                  glyphRunRange.location + glyphRunRange.length - 1]];
+            
+            if (glyphRunRange.location >= [element textRange].location + [element textRange].length) {
                 element = [elementEnumerator nextObject];
             }
             
-            CGRect glyphRunRect = CGRectMake(CGRectGetMinX(lineBounds) + lineOrigins[lineIndex].x,
-                                             CGRectGetMinY(lineBounds) + lineOrigins[lineIndex].y,
-                                             0.f,
-                                             0.f);
-            
-            glyphRunRect.size.width = CTRunGetTypographicBounds(glyphRun, CFRangeMake(0, 0), NULL, NULL, NULL);
-            glyphRunRect.size.height = CGRectGetHeight(lineBounds);
-            
-            CGRect actualGlyphRunRect = CGRectMake(CGRectGetMinX(glyphRunRect),
-                                                   CGRectGetMaxY(rect) - CGRectGetMaxY(glyphRunRect),
-                                                   CGRectGetWidth(glyphRunRect),
-                                                   CGRectGetHeight(glyphRunRect));
-            
-            actualGlyphRunRect = CGRectOffset(actualGlyphRunRect, CGRectGetMinX(absoluteRect), CGRectGetMinY(absoluteRect));
-            
-            if (CGRectEqualToRect([element accessibilityFrame], CGRectNull)) {
-                [element setAccessibilityFrame:actualGlyphRunRect];
-            } else {
-                [element setAccessibilityFrame:CGRectUnion([element accessibilityFrame], actualGlyphRunRect)];
+            if (glyphRunRange.location >= [element textRange].location) {
+                CGRect glyphRunRect = CGRectMake(CGRectGetMinX(lineBounds) + lineOrigins[lineIndex].x,
+                                                 CGRectGetMinY(lineBounds) + lineOrigins[lineIndex].y,
+                                                 0.f,
+                                                 0.f);
+                
+                glyphRunRect.size.width = CTRunGetTypographicBounds(glyphRun, CFRangeMake(0, 0), NULL, NULL, NULL);
+                glyphRunRect.size.height = CGRectGetHeight(lineBounds);
+                
+                CGRect actualGlyphRunRect = CGRectMake(CGRectGetMinX(glyphRunRect),
+                                                       CGRectGetMaxY(rect) - CGRectGetMaxY(glyphRunRect),
+                                                       CGRectGetWidth(glyphRunRect),
+                                                       CGRectGetHeight(glyphRunRect));
+                
+                actualGlyphRunRect = CGRectOffset(actualGlyphRunRect, CGRectGetMinX(absoluteRect), CGRectGetMinY(absoluteRect));
+                
+                if (CGRectEqualToRect([element accessibilityFrame], CGRectNull)) {
+                    [element setAccessibilityFrame:actualGlyphRunRect];
+                } else {
+                    [element setAccessibilityFrame:CGRectUnion([element accessibilityFrame], actualGlyphRunRect)];
+                }
             }
         }
     }
     
+    NSLog(@"[%@]", [runRanges componentsJoinedByString:@", "]);
     NSLog(@"%@", _accessibilityElements);
 }
 

@@ -34,7 +34,6 @@
 		5E5BC8A116E7BE9400165503 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5BC8A016E7BE9400165503 /* CoreText.framework */; };
 		5E993C1C16FCF92800120305 /* BPTextVisitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E993C1B16FCF92800120305 /* BPTextVisitor.m */; };
 		5E993C2016FCFB1000120305 /* BPTextVisitorTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E993C1F16FCFB1000120305 /* BPTextVisitorTests.mm */; };
-		5E993C2316FD00C200120305 /* BPAccessibilityVisitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E993C2216FD00C200120305 /* BPAccessibilityVisitor.m */; };
 		5E993C2616FD027300120305 /* BPAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E993C2516FD027300120305 /* BPAccessibilityElement.m */; };
 		5E993C2816FD183C00120305 /* BPAccessibilityVisitorTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E993C2716FD183C00120305 /* BPAccessibilityVisitorTests.mm */; };
 		5E993C2916FD197300120305 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E5BC84F16E005E700165503 /* UIKit.framework */; };
@@ -113,8 +112,6 @@
 		5E993C1A16FCF92800120305 /* BPTextVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPTextVisitor.h; sourceTree = "<group>"; };
 		5E993C1B16FCF92800120305 /* BPTextVisitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPTextVisitor.m; sourceTree = "<group>"; };
 		5E993C1F16FCFB1000120305 /* BPTextVisitorTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BPTextVisitorTests.mm; sourceTree = "<group>"; };
-		5E993C2116FD00C200120305 /* BPAccessibilityVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPAccessibilityVisitor.h; sourceTree = "<group>"; };
-		5E993C2216FD00C200120305 /* BPAccessibilityVisitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPAccessibilityVisitor.m; sourceTree = "<group>"; };
 		5E993C2416FD027300120305 /* BPAccessibilityElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BPAccessibilityElement.h; sourceTree = "<group>"; };
 		5E993C2516FD027300120305 /* BPAccessibilityElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPAccessibilityElement.m; sourceTree = "<group>"; };
 		5E993C2716FD183C00120305 /* BPAccessibilityVisitorTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BPAccessibilityVisitorTests.mm; sourceTree = "<group>"; };
@@ -269,8 +266,6 @@
 			children = (
 				5E993C2416FD027300120305 /* BPAccessibilityElement.h */,
 				5E993C2516FD027300120305 /* BPAccessibilityElement.m */,
-				5E993C2116FD00C200120305 /* BPAccessibilityVisitor.h */,
-				5E993C2216FD00C200120305 /* BPAccessibilityVisitor.m */,
 				5ED830321799D6D0009B2857 /* BPElement+AccessibilityCombining.h */,
 				5ED830331799D6D0009B2857 /* BPElement+AccessibilityCombining.m */,
 			);
@@ -422,7 +417,6 @@
 				5E3C9F7C16FCC424000384CB /* BPElementWalker.m in Sources */,
 				5E3C9F7C16FCC424000384CB /* BPElementWalker.m in Sources */,
 				5E993C1C16FCF92800120305 /* BPTextVisitor.m in Sources */,
-				5E993C2316FD00C200120305 /* BPAccessibilityVisitor.m in Sources */,
 				5E993C2616FD027300120305 /* BPAccessibilityElement.m in Sources */,
 				C85A593F1738523600B9C2F2 /* BPAttributedTextVisitor.m in Sources */,
 				5ED830341799D6D0009B2857 /* BPElement+AccessibilityCombining.m in Sources */,
