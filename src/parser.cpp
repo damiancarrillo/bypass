@@ -121,10 +121,11 @@ namespace Bypass {
 		std::map<int, Element>::iterator it = elementSoup.find(elementCount);
 
 		if ( it != elementSoup.end() ) {
-			Element * element = &((*it).second);
+			Element *element = &((*it).second);
+			size_t pos = element->text.size() - controlCharacters.size();
 
-			if (boost::ends_with(element->text, controlCharacters)) {
-				boost::erase_tail(element->text, controlCharacters.size());
+			if (element->text.substr(pos, string::npos) == controlCharacters) {
+				element->text.erase(pos, string::npos);
 			}
 		}
 	}
@@ -143,7 +144,7 @@ namespace Bypass {
 
 		std::string textString(text->data, text->data + text->size);
 		std::vector<std::string> strs;
-		boost::split(strs, textString, boost::is_any_of("|"));
+		split(strs, textString, '|');
 
 		for(vector<std::string>::iterator it = strs.begin(); it != strs.end(); it++) {
 			int pos = atoi((*it).c_str());
@@ -162,6 +163,17 @@ namespace Bypass {
 		elementSoup[elementCount] = block;
 		oss << '|';
 		bufputs(ob, oss.str().c_str());
+	}
+
+	void Parser::split(std::vector<std::string> &tokens, const std::string &text, char sep) {
+		int start = 0, end = 0;
+
+		while ((end = text.find(sep, start)) != string::npos) {
+			tokens.push_back(text.substr(start, end - start));
+			start = end + 1;
+		}
+
+		tokens.push_back(text.substr(start));
 	}
 
 	void Parser::parsedBlockCode(struct buf *ob, struct buf *text) {
@@ -202,41 +214,43 @@ namespace Bypass {
 
 		std::vector<std::string> strs;
 		std::string textString;
+
 		if (text) {
 			textString = std::string(text->data, text->data + text->size);
-			boost::split(strs, textString, boost::is_any_of("|"));
+			split(strs, textString, '|');
 		}
+
 		if (strs.size() > 0) {
-            std::string str0 = strs[0];
+			std::string str0 = strs[0];
 
-            if (str0.length() > 0) {
-                int pos = atoi(str0.c_str());
-                std::map<int, Element>::iterator elit = elementSoup.find(pos);
+			if (str0.length() > 0) {
+				int pos = atoi(str0.c_str());
+				std::map<int, Element>::iterator elit = elementSoup.find(pos);
 
-                Element element = elit->second;
-                element.setType(type);
+				Element element = elit->second;
+				element.setType(type);
 
-                if (extra != NULL && extra->size) {
-                    if (element.getType() == LINK) {
-                        element.addAttribute("link", std::string(extra->data, extra->data + extra->size));
-                    }
-                }
+				if (extra != NULL && extra->size) {
+					if (element.getType() == LINK) {
+						element.addAttribute("link", std::string(extra->data, extra->data + extra->size));
+					}
+				}
 
-                if (extra2 != NULL && extra2->size) {
-                    if (element.getType() == LINK) {
-                        element.addAttribute("title", std::string(extra2->data, extra2->data + extra2->size));
-                    }
-                }
-                
-                elementSoup.erase(pos);
-                if (output) {
-                    elementSoup[pos] = element;
-                }
-            }
+				if (extra2 != NULL && extra2->size) {
+					if (element.getType() == LINK) {
+						element.addAttribute("title", std::string(extra2->data, extra2->data + extra2->size));
+					}
+				}
 
-            if (output) {
-                bufputs(ob, textString.c_str());
-            }
+				elementSoup.erase(pos);
+				if (output) {
+					elementSoup[pos] = element;
+				}
+			}
+
+			if (output) {
+				bufputs(ob, textString.c_str());
+			}
 		}
 		else {
 			Element element;

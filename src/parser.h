@@ -24,7 +24,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <map>
-#include <boost/algorithm/string.hpp>
 
 extern "C" {
 #include "markdown.h"
@@ -45,6 +44,8 @@ namespace Bypass {
 
 		Document parse(const char* markdown);
 		Document parse(const std::string &markdown);
+
+		void split(std::vector<std::string> &tokens, const std::string &text, char sep);
 
 		// Block Element Callbacks
 
