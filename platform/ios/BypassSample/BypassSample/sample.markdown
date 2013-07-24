@@ -1,21 +1,25 @@
-#Header sizes
-##Smaller header
-###Even smaller header
+An h1 header
+============
 
-Paragraphs are obviously supported along with all the fancy text styling you could want.
-There is *italic*, **bold** and ***bold italic***. Even links are supported. Visit the
-github page for Bypass [here](https://github.com/Uncodin/bypass).
+Paragraphs are separated by a blank line.
 
-* Nested List
-	* One
-	* Two
-	* Three
-		* One
-		* Two
-		* Three
+2nd paragraph. *Italic*, **bold**, `monospace`. Itemized lists
+look like:
 
-## Code Block Support
+  * this one
+  * that one
+  * the other one
 
-    const char* str;
-    str = env->GetStringUTFChars(markdown, NULL);
-			
+Note that --- not considering the asterisk --- the actual text
+content starts at 4-columns in.
+
+> Block quotes are
+> written like so.
+>
+> They can span multiple paragraphs,
+> if you like.
+
+Use 3 dashes for an em-dash. Use 2 dashes for ranges (ex. "it's all in
+chapters 12--14"). Three dots ... will be converted to an ellipsis.
+
+
